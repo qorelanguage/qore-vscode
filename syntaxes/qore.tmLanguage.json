@@ -7,7 +7,8 @@
 		{ "include": "#strings" },
 		{ "include": "#constants" },
 		{ "include": "#storage_types" },
-		{ "include": "#storage_modifiers" }
+		{ "include": "#storage_modifiers" },
+		{ "include": "#builtins" }
 	],
 	"repository": {
 		"comments": {
@@ -128,11 +129,31 @@
 				{
 					"match": "\\bNULL\\b",
 					"name": "constant.language.null.qore"
+				},
+				{
+					"match": "\\b(NT_(BINARY|BOOLEAN|CALLREF|CLOSURE|DATE|FLOAT|INT|HASH|LIST|NOTHING|NULL|NUMBER|OBJECT|STRING))\\b",
+					"name": "constant.language.types.qore"
 				}
 			]
 		},
 		"storage_types": {
 			"patterns": [
+				{
+					"match": "\\bclass\\b",
+					"name": "storage.type.class.qore"
+				},
+				{
+					"match": "\\bnamespace\\b",
+					"name": "storage.type.namespace.qore"
+				},
+				{
+					"match": "\\bmodule\\b",
+					"name": "storage.type.module.qore"
+				},
+				{
+					"match": "\\bsub\\b",
+					"name": "storage.type.subroutine.qore"
+				},
 				{
 					"match": "\\b(binary|bool|date|float|hash|int|list|number|string)\\b",
 					"name": "storage.type.primitive.qore"
@@ -188,6 +209,30 @@
 				{
 					"match": "\\b(const|deprecated|final|internal|my|our|public|private|static)\\b",
 					"name": "storage.modifier.variable.qore"
+				}
+			]
+		},
+		"builtins": {
+			"patterns": [
+				{
+					"match": "\\b(Platform|PlatformOS|PlatformCPU)\\b",
+					"name": "support.variable.platform.qore"
+				},
+				{
+					"match": "\\b(Build|BuildHost|Compiler|CFLAGS|LDFLAGS|MACHINE_MSB)\\b",
+					"name": "support.variable.build.qore"
+				},
+				{
+					"match": "\\b(VersionString|VersionMajor|VersionMinor|VersionSub)\\b",
+					"name": "support.variable.version.qore"
+				},
+				{
+					"match": "\\b(stdin|stdout|stderr|stdin_stream|stdout_stream|stderr_stream)\\b",
+					"name": "support.variable.stdio.qore"
+				},
+				{
+					"match": "\\b(PathSep|DirSep)\\b",
+					"name": "support.variable.separators.qore"
 				}
 			]
 		},
