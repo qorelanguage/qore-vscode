@@ -48,7 +48,7 @@
                     "name": "keyword.control.oncondition.qore"
                 },
                 {
-                    "match": "\\b(context|subcontext|summarize)\\b",
+                    "match": "\\b(by|context|sortBy|sortDescendingBy|subcontext|summarize|where)\\b",
                     "name": "keyword.control.special.qore"
                 },
                 {
@@ -156,6 +156,10 @@
                     "name": "storage.type.subroutine.qore"
                 },
                 {
+                    "match": "\\b(inherits|returns)\\b",
+                    "name": "storage.type.special.qore"
+                },
+                {
                     "match": "\\b(binary|bool|date|float|hash|int|list|number|string)\\b",
                     "name": "storage.type.primitive.qore"
                 },
@@ -204,11 +208,15 @@
                     "name": "storage.modifier.class.qore"
                 },
                 {
-                    "match": "\\b(abstract|deprecated|final|internal|public|private|static|synchronized)\\b",
+                    "match": "\\b(private:hierarchy|private:internal)\\b",
+                    "name": "storage.modifier.private.special.qore"
+                },
+                {
+                    "match": "\\b(abstract|deprecated|final|public|private|static|synchronized)\\b",
                     "name": "storage.modifier.function.qore"
                 },
                 {
-                    "match": "\\b(const|deprecated|final|internal|my|our|public|private|static)\\b",
+                    "match": "\\b(const|deprecated|final|my|our|public|private|static)\\b",
                     "name": "storage.modifier.variable.qore"
                 }
             ]
