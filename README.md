@@ -1,0 +1,3 @@
+# qore-vscode
+
+qore-vscode is a Qore language extension for Visual Studio Code. Currently under development...
