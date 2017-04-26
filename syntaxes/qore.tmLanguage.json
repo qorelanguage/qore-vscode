@@ -3,7 +3,9 @@
     "name": "Qore",
     "patterns": [
         { "include": "#comments" },
+        { "include": "#binary" },
         { "include": "#keywords" },
+        { "include": "#operators" },
         { "include": "#strings" },
         { "include": "#dates" },
         { "include": "#numbers" },
@@ -53,12 +55,28 @@
                     "name": "keyword.control.special.qore"
                 },
                 {
-                    "match": "\\?|:",
-                    "name": "keyword.control.ternary.qore"
-                },
-                {
                     "match": "\\b(background|chomp|elements|exists|extract|foldl|foldr|instanceof|keys|map|pop|push|remove|select|splice|shift|trim|unshift)\\b",
                     "name": "keyword.operator.qore"
+                },
+                {
+                    "match": "\\bnew\\b",
+                    "name": "keyword.operator.new.qore"
+                },
+                {
+                    "match": "\\bdelete\\b",
+                    "name": "keyword.operator.delete.qore"
+                },
+                {
+                    "match": "\\bcast\\b",
+                    "name": "keyword.operator.cast.qore"
+                }
+            ]
+        },
+        "operators": {
+            "patterns": [
+                {
+                    "match": "\\?|:",
+                    "name": "keyword.control.ternary.qore"
                 },
                 {
                     "match": "(<<|>>>?|\\^)",
@@ -99,18 +117,6 @@
                 {
                     "match": ";",
                     "name": "punctuation.terminator.qore"
-                },
-                {
-                    "match": "\\bnew\\b",
-                    "name": "keyword.operator.new.qore"
-                },
-                {
-                    "match": "\\bdelete\\b",
-                    "name": "keyword.operator.delete.qore"
-                },
-                {
-                    "match": "\\bcast\\b",
-                    "name": "keyword.operator.cast.qore"
                 }
             ]
         },
@@ -270,6 +276,14 @@
                 {
                     "match": "\\b((0(x|X)[0-9a-fA-F]*)|(([0-9]+\\.?[0-9]*)|(\\.[0-9]+))((e|E)(\\+|-)?[0-9]+)?)(n)?\\b",
                     "name": "constant.numeric.qore"
+                }
+            ]
+        },
+        "binary": {
+            "patterns": [
+                {
+                    "match": "<([0-9A-Fa-f][0-9A-Fa-f])+>",
+                    "name": "constant.numeric.binary.qore"
                 }
             ]
         },
