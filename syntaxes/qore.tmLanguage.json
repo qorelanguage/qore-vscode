@@ -3,6 +3,7 @@
     "name": "Qore",
     "patterns": [
         { "include": "#comments" },
+        { "include": "#parseoptions" },
         { "include": "#binary" },
         { "include": "#keywords" },
         { "include": "#operators" },
@@ -33,6 +34,34 @@
                         }
                     },
                     "name": "comment.block.qore"
+                }
+            ]
+        },
+        "parseoptions": {
+            "patterns": [
+                {
+                    "match": "^(%[a-z]+(-[a-z]+)+)(.*)$",
+                    "name": "meta.parseoption.qore",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.control.parseoption.qore"
+                        },
+                        "3": {
+                            "name": "string.unquoted.qore"
+                        }
+                    }
+                },
+                {
+                    "match": "^(%[a-z]+)(.*)$",
+                    "name": "meta.parseoption.qore",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.control.parseoption.qore"
+                        },
+                        "2": {
+                            "name": "string.unquoted.qore"
+                        }
+                    }
                 }
             ]
         },
