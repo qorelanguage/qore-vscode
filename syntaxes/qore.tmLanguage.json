@@ -3,7 +3,7 @@
     "name": "Qore",
     "patterns": [
         { "include": "#comments" },
-        { "include": "#parseoptions" },
+        { "include": "#parse_options" },
         { "include": "#binary" },
         { "include": "#keywords" },
         { "include": "#operators" },
@@ -37,7 +37,7 @@
                 }
             ]
         },
-        "parseoptions": {
+        "parse_options": {
             "patterns": [
                 {
                     "match": "^(%[a-z]+(-[a-z]+)+)(.*)$",
@@ -281,18 +281,32 @@
                 }
             ]
         },
+        "escaped_chars": {
+            "patterns": [
+                {
+                    "match": "\\\\([0-7]{3}|[0-7]{2}|[0-7]|[\"\\\\bfnrtv])",
+                    "name": "constant.character.escape.qore"
+                }
+            ]
+        },
+        "format_chars": {
+            "patterns": [
+                {
+                    "match": "(%[aAdfFgGnNsxXy])",
+                    "name": "constant.character.format.qore"
+                }
+            ]
+        },
         "strings": {
             "name": "string.quoted.double.qore",
             "begin": "\"",
             "end": "\"",
             "patterns": [
                 {
-                    "match": "\\\\([0-7]{3}|[0-7]{2}|[0-7]|[\"\\\\bfnrtv])",
-                    "name": "constant.character.escape.qore"
+                    "include": "#escaped_chars"
                 },
                 {
-                    "match": "(%[aAdfFgGnNsxXy])",
-                    "name": "constant.character.format.qore"
+                    "include": "#format_chars"
                 },
                 {
                     "match": "(&amp;|&lt;|&gt;)",
