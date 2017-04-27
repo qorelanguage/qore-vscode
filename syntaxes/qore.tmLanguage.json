@@ -43,7 +43,7 @@
                 {
                     "comment": "Regex match",
                     "begin": "(=~)\\s*(/)",
-                    "end": "([^/]*)(/)([imsx]*)",
+                    "end": "((?:[^/]|\\/)*)(/)([imsx]*)",
                     "beginCaptures": {
                         "1": {
                             "name": "keyword.operator.regexmatch.qore"
@@ -68,7 +68,7 @@
                 {
                     "comment": "Regex notmatch",
                     "begin": "(!~)\\s*(/)",
-                    "end": "([^/]*)(/)([imsx]*)",
+                    "end": "((?:[^/]|\\/)*)(/)([imsx]*)",
                     "beginCaptures": {
                         "1": {
                             "name": "keyword.operator.regexnotmatch.qore"
@@ -93,7 +93,7 @@
                 {
                     "comment": "Regex match (extract)",
                     "begin": "(=~)\\s*(x/)",
-                    "end": "([^/]*)(/)([imsxg]*)",
+                    "end": "((?:[^/]|\\/)*)(/)([imsxg]*)",
                     "beginCaptures": {
                         "1": {
                             "name": "keyword.operator.regexmatch.qore"
@@ -118,7 +118,7 @@
                 {
                     "comment": "Regex match (substitution)",
                     "begin": "(=~)\\s*(s/)",
-                    "end": "([^/]*)(/)([^/]*)(/)([imsxg]*)",
+                    "end": "((?:[^/]|\\/)*)(/)((?:[^/]|\\/)*)(/)([imsxg]*)",
                     "beginCaptures": {
                         "1": {
                             "name": "keyword.operator.regexmatch.qore"
