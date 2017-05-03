@@ -10,8 +10,8 @@ export function activate(context: ExtensionContext) {
     console.log('Activating qore-vscode extension');
 
     // Command-line arguments
-    let serverArgs = ['/path/to/qls'];
-    let debugServerArgs = ['/path/to/qls'];
+    let serverArgs = ['/path/to/qls.q'];
+    let debugServerArgs = ['/path/to/qls.q'];
     /*let serverOpts = {
         cwd: path.join('path', 'something', 'else'),
         env: {
@@ -26,7 +26,7 @@ export function activate(context: ExtensionContext) {
     if (DEV_MODE) {
         serverOptions = () => new Promise<child_process.ChildProcess>((resolve, reject) => {
             function spawnServer(...args: string[]): child_process.ChildProcess {
-                //let childProcess = child_process.spawn('qls');
+                //let childProcess = child_process.spawn('qls.q');
                 let childProcess = child_process.spawn('qore', serverArgs);
                 childProcess.stderr.on('data', data => { console.log(`stderr: ${data}`); });
                 childProcess.stdout.on('data', data => { console.log(`stdout: ${data}`); });
