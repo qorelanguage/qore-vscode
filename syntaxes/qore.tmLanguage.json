@@ -18,6 +18,38 @@
         { "include": "#builtins" }
     ],
     "repository": {
+        "binary": {
+            "patterns": [
+                {
+                    "match": "<([0-9A-Fa-f][0-9A-Fa-f])+>",
+                    "name": "constant.numeric.binary.qore"
+                }
+            ]
+        },
+        "builtins": {
+            "patterns": [
+                {
+                    "match": "\\b(Platform|PlatformOS|PlatformCPU)\\b",
+                    "name": "support.variable.platform.qore"
+                },
+                {
+                    "match": "\\b(Build|BuildHost|Compiler|CFLAGS|LDFLAGS|MACHINE_MSB)\\b",
+                    "name": "support.variable.build.qore"
+                },
+                {
+                    "match": "\\b(VersionString|VersionMajor|VersionMinor|VersionSub)\\b",
+                    "name": "support.variable.version.qore"
+                },
+                {
+                    "match": "\\b(stdin|stdout|stderr|stdin_stream|stdout_stream|stderr_stream)\\b",
+                    "name": "support.variable.stdio.qore"
+                },
+                {
+                    "match": "\\b(PathSep|DirSep)\\b",
+                    "name": "support.variable.separators.qore"
+                }
+            ]
+        },
         "comments": {
             "patterns": [
                 {
@@ -63,11 +95,225 @@
                 }
             ]
         },
+        "constants": {
+            "patterns": [
+                {
+                    "match": "\\bTrue\\b",
+                    "name": "constant.language.boolean.true.qore"
+                },
+                {
+                    "match": "\\bFalse\\b",
+                    "name": "constant.language.boolean.false.qore"
+                },
+                {
+                    "match": "\\bNOTHING\\b",
+                    "name": "constant.language.nothing.qore"
+                },
+                {
+                    "match": "\\bNULL\\b",
+                    "name": "constant.language.null.qore"
+                },
+                {
+                    "match": "\\b(NT_(BINARY|BOOLEAN|CALLREF|CLOSURE|DATE|FLOAT|INT|HASH|LIST|NOTHING|NULL|NUMBER|OBJECT|STRING))\\b",
+                    "name": "constant.language.types.qore"
+                }
+            ]
+        },
+        "dates": {
+            "patterns": [
+                {
+                    "comment": "ISO-8601 absolute date (with T)",
+                    "match": "\\b([0-9]{4})-((0[1-9])|(1[0-2]))-((0[1-9])|([12][0-9])|(3[01]))(T(([01][0-9])|(2[0-3]))(:[0-5][0-9])(:[0-5][0-9](\\.[0-9]{1,6})?)?)(Z|([+-][01][0-9](:[0-5][0-9](:[0-5][0-9])?)?))?\\b",
+                    "name": "constant.other.date.isot.qore"
+                },
+                {
+                    "comment": "ISO-8601 absolute date (with dash)",
+                    "match": "\\b([0-9]{4})-((0[1-9])|(1[0-2]))-((0[1-9])|([12][0-9])|(3[01]))(-(([01][0-9])|(2[0-3]))(:[0-5][0-9])(:[0-5][0-9])(\\.[0-9]{1,6})?)(Z|([+-][01][0-9](:[0-5][0-9](:[0-5][0-9])?)?))?\\b",
+                    "name": "constant.other.date.isodash.qore"
+                },
+                {
+                    "comment": "ISO-8601 absolute date (only YMD+TZ)",
+                    "match": "\\b([0-9]{4})-((0[1-9])|(1[0-2]))-((0[1-9])|([12][0-9])|(3[01]))(Z|([+-][01][0-9](:[0-5][0-9](:[0-5][0-9])?)?))?\\b",
+                    "name": "constant.other.date.isoymdtz.qore"
+                },
+                {
+                    "comment": "Just h+m+s+tz",
+                    "match": "\\b(([01][0-9])|(2[0-3]))(:[0-5][0-9])(:[0-5][0-9](\\.[0-9]{1,6})?)?(Z|([+-][01][0-9](:[0-5][0-9](:[0-5][0-9])?)?))?\\b",
+                    "name": "constant.other.date.hmstz.qore"
+                },
+                {
+                    "comment": "Single Relative Time Format",
+                    "match": "\\b[0-9]+(D|M|Y|h|m|ms|s|us)\\b",
+                    "name": "constant.other.date.singlertf.qore"
+                },
+                {
+                    "comment": "Short Relative Time Format (full)",
+                    "match": "\\bP(-?[0-9]+[YMD])+T(-?[0-9]+[HMSu])+\\b",
+                    "name": "constant.other.date.shortrtf.qore"
+                },
+                {
+                    "comment": "Short Relative Time Format (only YMDHSu parts)",
+                    "match": "\\bP(-?[0-9]+[YMDHSu])+\\b",
+                    "name": "constant.other.date.shortrtf.qore"
+                },
+                {
+                    "comment": "Short Relative Time Format (only THMSu parts)",
+                    "match": "\\bPT(-?[0-9]+[HMSu])+\\b",
+                    "name": "constant.other.date.shortrtf.qore"
+                },
+                {
+                    "comment": "Long Relative Time Format (full)",
+                    "match": "\\bP[0-9]{4}-[0-9]{2}-[0-9]{2}(T[0-9]{2}:[0-9]{2}(:[0-9]{2}(\\.[0-9]{1,6})?)?)?\\b",
+                    "name": "constant.other.date.lrtf.qore"
+                },
+                {
+                    "comment": "Long Relative Time Format (only h+m+s parts)",
+                    "match": "\\bP(T)?[0-9]{2}:[0-9]{2}(:[0-9]{2}(\\.[0-9]{1,6})?)?\\b",
+                    "name": "constant.other.date.lrtf.qore"
+                }
+            ]
+        },
         "doc_tags": {
             "patterns": [
                 {
                     "match": "((\\@|\\\\)(brief|note|param|ref|return|sa|see|throw))",
                     "name": "constant.other.doctag.qore"
+                }
+            ]
+        },
+        "escaped_chars": {
+            "patterns": [
+                {
+                    "match": "\\\\([0-7]{3}|[0-7]{2}|[0-7]|[\"\\\\bfnrtv])",
+                    "name": "constant.character.escape.qore"
+                }
+            ]
+        },
+        "format_chars": {
+            "patterns": [
+                {
+                    "match": "(%[aAdfFgGnNsxXy])",
+                    "name": "constant.character.format.qore"
+                }
+            ]
+        },
+        "keywords": {
+            "patterns": [
+                {
+                    "match": "\\b(break|case|continue|default|do|else|for|if|return|switch|thread_exit|while)\\b",
+                    "name": "keyword.control.qore"
+                },
+                {
+                    "match": "\\b(try|catch|throw|rethrow)\\b",
+                    "name": "keyword.control.exception.qore"
+                },
+                {
+                    "match": "\\b(on_exit|on_error|on_success)\\b",
+                    "name": "keyword.control.oncondition.qore"
+                },
+                {
+                    "match": "\\b(by|context|sortBy|sortDescendingBy|subcontext|summarize|where)\\b",
+                    "name": "keyword.control.special.qore"
+                },
+                {
+                    "match": "\\b(background|chomp|elements|exists|extract|foldl|foldr|instanceof|keys|map|pop|push|remove|select|splice|shift|trim|unshift)\\b",
+                    "name": "keyword.operator.qore"
+                },
+                {
+                    "match": "\\bnew\\b",
+                    "name": "keyword.operator.new.qore"
+                },
+                {
+                    "match": "\\bdelete\\b",
+                    "name": "keyword.operator.delete.qore"
+                },
+                {
+                    "match": "\\bcast\\b",
+                    "name": "keyword.operator.cast.qore"
+                }
+            ]
+        },
+        "numbers": {
+            "patterns": [
+                {
+                    "match": "\\b((0(x|X)[0-9a-fA-F]*)|(([0-9]+\\.?[0-9]*)|(\\.[0-9]+))((e|E)(\\+|-)?[0-9]+)?)(n)?\\b",
+                    "name": "constant.numeric.qore"
+                }
+            ]
+        },
+        "operators": {
+            "patterns": [
+                {
+                    "match": "\\?|:",
+                    "name": "keyword.control.ternary.qore"
+                },
+                {
+                    "match": "(<<|>>>?|\\^)",
+                    "name": "keyword.operator.bitwise.qore"
+                },
+                {
+                    "match": "((&|\\^|\\||<<|>>)=)",
+                    "name": "keyword.operator.assignment.bitwise.qore"
+                },
+                {
+                    "match": "(===?|!==?|<=|>=|<=>|<|>)",
+                    "name": "keyword.operator.comparison.qore"
+                },
+                {
+                    "match": "([+*/%-]=)",
+                    "name": "keyword.operator.assignment.arithmetic.qore"
+                },
+                {
+                    "match": "(=)",
+                    "name": "keyword.operator.assignment.qore"
+                },
+                {
+                    "match": "(\\-\\-|\\+\\+)",
+                    "name": "keyword.operator.increment-decrement.qore"
+                },
+                {
+                    "match": "(\\-|\\+|\\*|\\/|%)",
+                    "name": "keyword.operator.arithmetic.qore"
+                },
+                {
+                    "match": "(!|&&|\\|\\|)",
+                    "name": "keyword.operator.logical.qore"
+                },
+                {
+                    "match": "(\\||&)",
+                    "name": "keyword.operator.bitwise.qore"
+                },
+                {
+                    "match": ";",
+                    "name": "punctuation.terminator.qore"
+                }
+            ]
+        },
+        "parse_options": {
+            "patterns": [
+                {
+                    "match": "^(%[a-z]+(-[a-z]+)+)(.*)$",
+                    "name": "meta.parseoption.qore",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.control.parseoption.qore"
+                        },
+                        "3": {
+                            "name": "string.unquoted.qore"
+                        }
+                    }
+                },
+                {
+                    "match": "^(%[a-z]+)(.*)$",
+                    "name": "meta.parseoption.qore",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.control.parseoption.qore"
+                        },
+                        "2": {
+                            "name": "string.unquoted.qore"
+                        }
+                    }
                 }
             ]
         },
@@ -212,139 +458,23 @@
                 }
             ]
         },
-        "parse_options": {
+        "storage_modifiers": {
             "patterns": [
                 {
-                    "match": "^(%[a-z]+(-[a-z]+)+)(.*)$",
-                    "name": "meta.parseoption.qore",
-                    "captures": {
-                        "1": {
-                            "name": "keyword.control.parseoption.qore"
-                        },
-                        "3": {
-                            "name": "string.unquoted.qore"
-                        }
-                    }
+                    "match": "\\b(deprecated|final|public)\\b",
+                    "name": "storage.modifier.class.qore"
                 },
                 {
-                    "match": "^(%[a-z]+)(.*)$",
-                    "name": "meta.parseoption.qore",
-                    "captures": {
-                        "1": {
-                            "name": "keyword.control.parseoption.qore"
-                        },
-                        "2": {
-                            "name": "string.unquoted.qore"
-                        }
-                    }
-                }
-            ]
-        },
-        "keywords": {
-            "patterns": [
-                {
-                    "match": "\\b(break|case|continue|default|do|else|for|if|return|switch|thread_exit|while)\\b",
-                    "name": "keyword.control.qore"
+                    "match": "\\b(private:hierarchy|private:internal)\\b",
+                    "name": "storage.modifier.private.special.qore"
                 },
                 {
-                    "match": "\\b(try|catch|throw|rethrow)\\b",
-                    "name": "keyword.control.exception.qore"
+                    "match": "\\b(abstract|deprecated|final|public|private|static|synchronized)\\b",
+                    "name": "storage.modifier.function.qore"
                 },
                 {
-                    "match": "\\b(on_exit|on_error|on_success)\\b",
-                    "name": "keyword.control.oncondition.qore"
-                },
-                {
-                    "match": "\\b(by|context|sortBy|sortDescendingBy|subcontext|summarize|where)\\b",
-                    "name": "keyword.control.special.qore"
-                },
-                {
-                    "match": "\\b(background|chomp|elements|exists|extract|foldl|foldr|instanceof|keys|map|pop|push|remove|select|splice|shift|trim|unshift)\\b",
-                    "name": "keyword.operator.qore"
-                },
-                {
-                    "match": "\\bnew\\b",
-                    "name": "keyword.operator.new.qore"
-                },
-                {
-                    "match": "\\bdelete\\b",
-                    "name": "keyword.operator.delete.qore"
-                },
-                {
-                    "match": "\\bcast\\b",
-                    "name": "keyword.operator.cast.qore"
-                }
-            ]
-        },
-        "operators": {
-            "patterns": [
-                {
-                    "match": "\\?|:",
-                    "name": "keyword.control.ternary.qore"
-                },
-                {
-                    "match": "(<<|>>>?|\\^)",
-                    "name": "keyword.operator.bitwise.qore"
-                },
-                {
-                    "match": "((&|\\^|\\||<<|>>)=)",
-                    "name": "keyword.operator.assignment.bitwise.qore"
-                },
-                {
-                    "match": "(===?|!==?|<=|>=|<=>|<|>)",
-                    "name": "keyword.operator.comparison.qore"
-                },
-                {
-                    "match": "([+*/%-]=)",
-                    "name": "keyword.operator.assignment.arithmetic.qore"
-                },
-                {
-                    "match": "(=)",
-                    "name": "keyword.operator.assignment.qore"
-                },
-                {
-                    "match": "(\\-\\-|\\+\\+)",
-                    "name": "keyword.operator.increment-decrement.qore"
-                },
-                {
-                    "match": "(\\-|\\+|\\*|\\/|%)",
-                    "name": "keyword.operator.arithmetic.qore"
-                },
-                {
-                    "match": "(!|&&|\\|\\|)",
-                    "name": "keyword.operator.logical.qore"
-                },
-                {
-                    "match": "(\\||&)",
-                    "name": "keyword.operator.bitwise.qore"
-                },
-                {
-                    "match": ";",
-                    "name": "punctuation.terminator.qore"
-                }
-            ]
-        },
-        "constants": {
-            "patterns": [
-                {
-                    "match": "\\bTrue\\b",
-                    "name": "constant.language.boolean.true.qore"
-                },
-                {
-                    "match": "\\bFalse\\b",
-                    "name": "constant.language.boolean.false.qore"
-                },
-                {
-                    "match": "\\bNOTHING\\b",
-                    "name": "constant.language.nothing.qore"
-                },
-                {
-                    "match": "\\bNULL\\b",
-                    "name": "constant.language.null.qore"
-                },
-                {
-                    "match": "\\b(NT_(BINARY|BOOLEAN|CALLREF|CLOSURE|DATE|FLOAT|INT|HASH|LIST|NOTHING|NULL|NUMBER|OBJECT|STRING))\\b",
-                    "name": "constant.language.types.qore"
+                    "match": "\\b(const|deprecated|final|my|our|public|private|static)\\b",
+                    "name": "storage.modifier.variable.qore"
                 }
             ]
         },
@@ -412,66 +542,6 @@
                 }
             ]
         },
-        "storage_modifiers": {
-            "patterns": [
-                {
-                    "match": "\\b(deprecated|final|public)\\b",
-                    "name": "storage.modifier.class.qore"
-                },
-                {
-                    "match": "\\b(private:hierarchy|private:internal)\\b",
-                    "name": "storage.modifier.private.special.qore"
-                },
-                {
-                    "match": "\\b(abstract|deprecated|final|public|private|static|synchronized)\\b",
-                    "name": "storage.modifier.function.qore"
-                },
-                {
-                    "match": "\\b(const|deprecated|final|my|our|public|private|static)\\b",
-                    "name": "storage.modifier.variable.qore"
-                }
-            ]
-        },
-        "builtins": {
-            "patterns": [
-                {
-                    "match": "\\b(Platform|PlatformOS|PlatformCPU)\\b",
-                    "name": "support.variable.platform.qore"
-                },
-                {
-                    "match": "\\b(Build|BuildHost|Compiler|CFLAGS|LDFLAGS|MACHINE_MSB)\\b",
-                    "name": "support.variable.build.qore"
-                },
-                {
-                    "match": "\\b(VersionString|VersionMajor|VersionMinor|VersionSub)\\b",
-                    "name": "support.variable.version.qore"
-                },
-                {
-                    "match": "\\b(stdin|stdout|stderr|stdin_stream|stdout_stream|stderr_stream)\\b",
-                    "name": "support.variable.stdio.qore"
-                },
-                {
-                    "match": "\\b(PathSep|DirSep)\\b",
-                    "name": "support.variable.separators.qore"
-                }
-            ]
-        },
-        "escaped_chars": {
-            "patterns": [
-                {
-                    "match": "\\\\([0-7]{3}|[0-7]{2}|[0-7]|[\"\\\\bfnrtv])",
-                    "name": "constant.character.escape.qore"
-                }
-            ]
-        },
-        "format_chars": {
-            "patterns": [
-                {
-                    "match": "(%[aAdfFgGnNsxXy])",
-                    "name": "constant.character.format.qore"
-                }
-            ]
-        },
         "strings": {
             "name": "string.quoted.double.qore",
             "begin": "\"",
@@ -500,76 +570,6 @@
                 {
                     "match": "(&amp;|&lt;|&gt;)",
                     "name": "constant.character.special.qore"
-                }
-            ]
-        },
-        "numbers": {
-            "patterns": [
-                {
-                    "match": "\\b((0(x|X)[0-9a-fA-F]*)|(([0-9]+\\.?[0-9]*)|(\\.[0-9]+))((e|E)(\\+|-)?[0-9]+)?)(n)?\\b",
-                    "name": "constant.numeric.qore"
-                }
-            ]
-        },
-        "binary": {
-            "patterns": [
-                {
-                    "match": "<([0-9A-Fa-f][0-9A-Fa-f])+>",
-                    "name": "constant.numeric.binary.qore"
-                }
-            ]
-        },
-        "dates": {
-            "patterns": [
-                {
-                    "comment": "ISO-8601 absolute date (with T)",
-                    "match": "\\b([0-9]{4})-((0[1-9])|(1[0-2]))-((0[1-9])|([12][0-9])|(3[01]))(T(([01][0-9])|(2[0-3]))(:[0-5][0-9])(:[0-5][0-9](\\.[0-9]{1,6})?)?)(Z|([+-][01][0-9](:[0-5][0-9](:[0-5][0-9])?)?))?\\b",
-                    "name": "constant.other.date.isot.qore"
-                },
-                {
-                    "comment": "ISO-8601 absolute date (with dash)",
-                    "match": "\\b([0-9]{4})-((0[1-9])|(1[0-2]))-((0[1-9])|([12][0-9])|(3[01]))(-(([01][0-9])|(2[0-3]))(:[0-5][0-9])(:[0-5][0-9])(\\.[0-9]{1,6})?)(Z|([+-][01][0-9](:[0-5][0-9](:[0-5][0-9])?)?))?\\b",
-                    "name": "constant.other.date.isodash.qore"
-                },
-                {
-                    "comment": "ISO-8601 absolute date (only YMD+TZ)",
-                    "match": "\\b([0-9]{4})-((0[1-9])|(1[0-2]))-((0[1-9])|([12][0-9])|(3[01]))(Z|([+-][01][0-9](:[0-5][0-9](:[0-5][0-9])?)?))?\\b",
-                    "name": "constant.other.date.isoymdtz.qore"
-                },
-                {
-                    "comment": "Just h+m+s+tz",
-                    "match": "\\b(([01][0-9])|(2[0-3]))(:[0-5][0-9])(:[0-5][0-9](\\.[0-9]{1,6})?)?(Z|([+-][01][0-9](:[0-5][0-9](:[0-5][0-9])?)?))?\\b",
-                    "name": "constant.other.date.hmstz.qore"
-                },
-                {
-                    "comment": "Single Relative Time Format",
-                    "match": "\\b[0-9]+(D|M|Y|h|m|ms|s|us)\\b",
-                    "name": "constant.other.date.singlertf.qore"
-                },
-                {
-                    "comment": "Short Relative Time Format (full)",
-                    "match": "\\bP(-?[0-9]+[YMD])+T(-?[0-9]+[HMSu])+\\b",
-                    "name": "constant.other.date.shortrtf.qore"
-                },
-                {
-                    "comment": "Short Relative Time Format (only YMDHSu parts)",
-                    "match": "\\bP(-?[0-9]+[YMDHSu])+\\b",
-                    "name": "constant.other.date.shortrtf.qore"
-                },
-                {
-                    "comment": "Short Relative Time Format (only THMSu parts)",
-                    "match": "\\bPT(-?[0-9]+[HMSu])+\\b",
-                    "name": "constant.other.date.shortrtf.qore"
-                },
-                {
-                    "comment": "Long Relative Time Format (full)",
-                    "match": "\\bP[0-9]{4}-[0-9]{2}-[0-9]{2}(T[0-9]{2}:[0-9]{2}(:[0-9]{2}(\\.[0-9]{1,6})?)?)?\\b",
-                    "name": "constant.other.date.lrtf.qore"
-                },
-                {
-                    "comment": "Long Relative Time Format (only h+m+s parts)",
-                    "match": "\\bP(T)?[0-9]{2}:[0-9]{2}(:[0-9]{2}(\\.[0-9]{1,6})?)?\\b",
-                    "name": "constant.other.date.lrtf.qore"
                 }
             ]
         }
