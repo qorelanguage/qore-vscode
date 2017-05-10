@@ -24,7 +24,15 @@
                     "comment": "Single-line comment",
                     "name": "comment.line.number-sign.qore",
                     "begin": "#",
-                    "end": "$"
+                    "end": "$",
+                    "patterns": [
+                        {
+                            "include": "#comment_tags"
+                        },
+                        {
+                            "include": "#doc_tags"
+                        }
+                    ]
                 },
                 {
                     "comment": "Block comment",
@@ -35,7 +43,31 @@
                             "name": "punctuation.definition.comment.qore"
                         }
                     },
-                    "name": "comment.block.qore"
+                    "name": "comment.block.qore",
+                    "patterns": [
+                        {
+                            "include": "#comment_tags"
+                        },
+                        {
+                            "include": "#doc_tags"
+                        }
+                    ]
+                }
+            ]
+        },
+        "comment_tags": {
+            "patterns": [
+                {
+                    "match": "(\\b(BUG|FIXME|HACK|NOTE|TODO|XXX)\\b)",
+                    "name": "constant.other.commenttag.qore"
+                }
+            ]
+        },
+        "doc_tags": {
+            "patterns": [
+                {
+                    "match": "((\\@|\\\\)(brief|note|param|ref|return|sa|see|throw))",
+                    "name": "constant.other.doctag.qore"
                 }
             ]
         },
