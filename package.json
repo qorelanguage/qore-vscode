@@ -32,7 +32,7 @@
         "languages": [{
             "id": "qore",
             "aliases": ["Qore", "qore"],
-            "extensions": [".q",".qm",".qtest",".ql",".qc",".qsd",".qfd",".qwf",".qjob"],
+            "extensions": [".q",".qm",".qtest",".ql",".qc",".qsd",".qfd",".qwf",".qjob",".qclass",".qconst",".qsm"],
             "configuration": "./qore.configuration.json"
         }],
         "grammars": [{

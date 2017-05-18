@@ -10,8 +10,8 @@ export function activate(context: ExtensionContext) {
     console.log('Activating qore-vscode extension');
 
     // Command-line arguments
-    let serverArgs = ['/path/to/qls.q'];
-    let debugServerArgs = ['/path/to/qls.q'];
+    let serverArgs = ['/export/home/dnichols/src/qore/git/qls/qls.q'];
+    let debugServerArgs = ['/export/home/dnichols/src/qore/git/qls/qls.q'];
     /*let serverOpts = {
         cwd: path.join('path', 'something', 'else'),
         env: {
@@ -63,6 +63,9 @@ export function activate(context: ExtensionContext) {
                 workspace.createFileSystemWatcher('**/*.qfd'),
                 workspace.createFileSystemWatcher('**/*.qwf'),
                 workspace.createFileSystemWatcher('**/*.qjob')
+                workspace.createFileSystemWatcher('**/*.qclass')
+                workspace.createFileSystemWatcher('**/*.qconst')
+                workspace.createFileSystemWatcher('**/*.qsm')
             ]
         }
     }
@@ -72,7 +75,7 @@ export function activate(context: ExtensionContext) {
     let disposable = lc.start();
     console.log('Started qls');
 
-    // Push the disposable to the context's subscriptions so that the 
+    // Push the disposable to the context's subscriptions so that the
     // client can be deactivated on extension deactivation
     context.subscriptions.push(disposable);
 }
