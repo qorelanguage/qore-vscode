@@ -10,8 +10,8 @@ export function activate(context: ExtensionContext) {
     console.log('Activating qore-vscode extension');
 
     // Command-line arguments
-    let serverArgs = ['/export/home/dnichols/src/qore/git/qls/qls.q'];
-    let debugServerArgs = ['/export/home/dnichols/src/qore/git/qls/qls.q'];
+    let serverArgs = ['/path/to/qls.q'];
+    let debugServerArgs = ['/path/to/qls.q'];
     /*let serverOpts = {
         cwd: path.join('path', 'something', 'else'),
         env: {
