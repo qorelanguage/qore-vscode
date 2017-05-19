@@ -2,6 +2,7 @@
     "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
     "name": "Qore",
     "patterns": [
+        { "include": "#implicit_args" },
         { "include": "#comments" },
         { "include": "#parse_options" },
         { "include": "#regexps" },
@@ -194,6 +195,22 @@
                 {
                     "match": "(%[aAdfFgGnNsxXy])",
                     "name": "constant.character.format.qore"
+                }
+            ]
+        },
+        "implicit_args": {
+            "patterns": [
+                {
+                    "match": "([$][1-9][0-9]*)",
+                    "name": "constant.language.implicitarg.qore"
+                },
+                {
+                    "match": "([$]{2})",
+                    "name": "constant.language.implicitarglist.qore"
+                },
+                {
+                    "match": "([$]#)",
+                    "name": "constant.language.implicitindex.qore"
                 }
             ]
         },
