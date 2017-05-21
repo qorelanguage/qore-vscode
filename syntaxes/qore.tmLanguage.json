@@ -389,7 +389,7 @@
                             "name": "keyword.operator.regexmatch.qore"
                         },
                         "2": {
-                            "name": "keyword.operator.regextractopen.qore"
+                            "name": "keyword.operator.regexopen.qore"
                         }
                     },
                     "endCaptures": {
@@ -405,13 +405,13 @@
                 {
                     "comment": "Regex match (substitution)",
                     "begin": "(=~)\\s*(s/)",
-                    "end": "((?:[^/])*)(?<!\\\\)(/)((?:[^/])*)(?<!\\\\)(/)([imsxg]*)",
+                    "end": "((?:[^/]|\\\\/)*)(?<!\\\\)(/)((?:[^/]|\\\\/)*)(?<!\\\\)(/)([imsxg]*)",
                     "beginCaptures": {
                         "1": {
                             "name": "keyword.operator.regexmatch.qore"
                         },
                         "2": {
-                            "name": "keyword.operator.regexsubstopen.qore"
+                            "name": "keyword.operator.regexopen.qore"
                         }
                     },
                     "endCaptures": {
@@ -436,13 +436,13 @@
                 {
                     "comment": "Regex match (transliteration)",
                     "begin": "(=~)\\s*(tr/)",
-                    "end": "((?:[^/])*)(?<!\\\\)(/)((?:[^/])*)(?<!\\\\)(/)([imsxg]*)",
+                    "end": "((?:[^/]|\\\\/)*)(?<!\\\\)(/)((?:[^/]|\\\\/)*)(?<!\\\\)(/)([imsxg]*)",
                     "beginCaptures": {
                         "1": {
                             "name": "keyword.operator.regexmatch.qore"
                         },
                         "2": {
-                            "name": "keyword.operator.regextransopen.qore"
+                            "name": "keyword.operator.regexopen.qore"
                         }
                     },
                     "endCaptures": {
