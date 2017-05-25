@@ -31,15 +31,49 @@
     "contributes": {
         "languages": [{
             "id": "qore",
-            "aliases": ["Qore", "qore"],
+            "aliases": ["Qore", "qore", "qr"],
             "extensions": [".q",".qm",".qtest",".ql",".qc",".qsd",".qfd",".qwf",".qjob",".qclass",".qconst",".qsm"],
+            "firstLine": "^#!.*mode:[ ]*qore",
             "configuration": "./qore.configuration.json"
         }],
         "grammars": [{
             "language": "qore",
             "scopeName": "source.qore",
             "path": "./syntaxes/qore.tmLanguage.json"
-        }]
+        }],
+        "configuration": {
+            "type": "object",
+            "title": "Qore configuration",
+            "properties": {
+                "qore.logging": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Log QLS operations."
+                },
+                "qore.logVerbosity": {
+                    "type": "number",
+                    "default": 0,
+                    "description": "Verbosity of QLS logging. From 0 to 2."
+                },
+                "qore.logFile": {
+                    "type": ["string", "null"],
+                    "default": null,
+                    "description": "Specifies the QLS log file path. If logging is turned on, all the operations will be logged to this file."
+                },
+                "qore.appendToLog": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Append to QLS log file instead of overwriting it on each restart."
+                }
+            }
+        },
+        "configurationDefaults": {
+            "[qore]": {
+                "editor.tabSize": 4,
+                "editor.insertSpaces": true,
+                "editor.quickSuggestions": true
+            }
+        }
     },
     "scripts": {
         "vscode:prepublish": "tsc -p ./",
