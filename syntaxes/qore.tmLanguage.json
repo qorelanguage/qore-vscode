@@ -339,7 +339,7 @@
                 {
                     "comment": "Regex match",
                     "begin": "(=~)\\s*(/)",
-                    "end": "(?<!\\\\)(/)([imsx]*)",
+                    "end": "(?:(?:\\\\\\\\)|(?:\\\\/)|[^\\/])*(/)([imsx]*)",
                     "beginCaptures": {
                         "1": {
                             "name": "keyword.operator.regexmatch.qore"
@@ -361,7 +361,7 @@
                 {
                     "comment": "Regex notmatch",
                     "begin": "(!~)\\s*(/)",
-                    "end": "(?<!\\\\)(/)([imsx]*)",
+                    "end": "(?:(?:\\\\\\\\)|(?:\\\\/)|[^\\/])*(/)([imsx]*)",
                     "beginCaptures": {
                         "1": {
                             "name": "keyword.operator.regexnotmatch.qore"
@@ -383,7 +383,7 @@
                 {
                     "comment": "Regex match (extract)",
                     "begin": "(=~)\\s*(x/)",
-                    "end": "(?<!\\\\)(/)([imsxg]*)",
+                    "end": "(?:(?:\\\\\\\\)|(?:\\\\/)|[^\\/])*(/)([imsxg]*)",
                     "beginCaptures": {
                         "1": {
                             "name": "keyword.operator.regexmatch.qore"
@@ -405,7 +405,7 @@
                 {
                     "comment": "Regex match (substitution)",
                     "begin": "(=~)\\s*(s/)",
-                    "end": "((?:[^/]|\\\\/)*)(?<!\\\\)(/)((?:[^/]|\\\\/)*)(?<!\\\\)(/)([imsxg]*)",
+                    "end": "(?:(?:\\\\\\\\)|(?:\\\\/)|[^\\/])*(/)(?:(?:\\\\\\\\)|(?:\\\\/)|[^\\/])*(/)([imsxg]*)",
                     "beginCaptures": {
                         "1": {
                             "name": "keyword.operator.regexmatch.qore"
@@ -416,18 +416,12 @@
                     },
                     "endCaptures": {
                         "1": {
-                            "name": "string.regexp.qore"
-                        },
-                        "2": {
                             "name": "keyword.operator.regexmiddle.qore"
                         },
-                        "3": {
-                            "name": "string.regexp.qore"
-                        },
-                        "4": {
+                        "2": {
                             "name": "keyword.operator.regexclose.qore"
                         },
-                        "5": {
+                        "3": {
                             "name": "keyword.other.regex.modifier.qore"
                         }
                     },
@@ -436,7 +430,7 @@
                 {
                     "comment": "Regex match (transliteration)",
                     "begin": "(=~)\\s*(tr/)",
-                    "end": "((?:[^/]|\\\\/)*)(?<!\\\\)(/)((?:[^/]|\\\\/)*)(?<!\\\\)(/)([imsxg]*)",
+                    "end": "(?:(?:\\\\\\\\)|(?:\\\\/)|[^\\/])*(/)(?:(?:\\\\\\\\)|(?:\\\\/)|[^\\/])*(/)([imsxg]*)",
                     "beginCaptures": {
                         "1": {
                             "name": "keyword.operator.regexmatch.qore"
@@ -447,18 +441,12 @@
                     },
                     "endCaptures": {
                         "1": {
-                            "name": "string.regexp.qore"
-                        },
-                        "2": {
                             "name": "keyword.operator.regexmiddle.qore"
                         },
-                        "3": {
-                            "name": "string.regexp.qore"
-                        },
-                        "4": {
+                        "2": {
                             "name": "keyword.operator.regexclose.qore"
                         },
-                        "5": {
+                        "3": {
                             "name": "keyword.other.regex.modifier.qore"
                         }
                     },
