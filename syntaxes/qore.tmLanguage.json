@@ -177,8 +177,117 @@
         "doc_tags": {
             "patterns": [
                 {
-                    "match": "((\\@|\\\\)(brief|code|endcode|note|par(am)?|ref|return|sa|see|throw))",
-                    "name": "constant.other.doctag.qore"
+                    "match": "((\\@|\\\\)(brief|endcode|note|return|sa|see|tableofcontents|throw))",
+                    "name": "constant.other.docs.tag.qore"
+                },
+                {
+                    "match": "((\\\\)c)",
+                    "name": "constant.other.docs.tag.qore"
+                },
+                {
+                    "match": "(?:\\@|\\\\)(?:code)(\\{[^{}]*\\})?",
+                    "name": "constant.other.docs.tag.qore",
+                    "captures":{
+                        "1": {
+                            "name": "string.other.docs.code.qore"
+                        }
+                    }
+                },
+                {
+                    "match": "(?:\\@|\\\\)(?:anchor)(?:\\s+(\\S*))?",
+                    "name": "constant.other.docs.tag.qore",
+                    "captures":{
+                        "1": {
+                            "name": "entity.other.docs.anchor.qore"
+                        }
+                    }
+                },
+                {
+                    "match": "(?:\\@|\\\\)(?:param)(?:\\s+(\\S*))?",
+                    "name": "constant.other.docs.tag.qore",
+                    "captures":{
+                        "1": {
+                            "name": "entity.other.docs.param.qore"
+                        }
+                    }
+                },
+                {
+                    "match": "(?:\\@|\\\\)(?:mainpage)(.*)$",
+                    "name": "constant.other.docs.tag.qore",
+                    "captures":{
+                        "1": {
+                            "name": "markup.heading.mainpage.title.qore"
+                        }
+                    }
+                },
+                {
+                    "match": "(?:\\@|\\\\)(?:par)(.*)$",
+                    "name": "constant.other.docs.tag.qore",
+                    "captures":{
+                        "1": {
+                            "name": "markup.heading.par.title.qore"
+                        }
+                    }
+                },
+                {
+                    "match": "(?:\\@|\\\\)(?:defgroup)(?:\\s+(\\S*))?(?:\\s+(.*))?$",
+                    "name": "constant.other.docs.tag.qore",
+                    "captures":{
+                        "1": {
+                            "name": "entity.other.docs.defgroup.tag.qore"
+                        },
+                        "2": {
+                            "name": "markup.heading.defgroup.name.qore"
+                        }
+                    }
+                },
+                {
+                    "match": "(?:\\@|\\\\)(?:page)(?:\\s+(\\S*))?(?:\\s+(.*))?$",
+                    "name": "constant.other.docs.tag.qore",
+                    "captures":{
+                        "1": {
+                            "name": "entity.other.docs.page.tag.qore"
+                        },
+                        "2": {
+                            "name": "markup.heading.page.name.qore"
+                        }
+                    }
+                },
+                {
+                    "match": "(?:\\@|\\\\)(?:(?:sub)*section)(?:\\s+(\\S*))?(?:\\s+(.*))?$",
+                    "name": "constant.other.docs.tag.qore",
+                    "captures":{
+                        "1": {
+                            "name": "entity.other.docs.section.tag.qore"
+                        },
+                        "2": {
+                            "name": "markup.heading.section.name.qore"
+                        }
+                    }
+                },
+                {
+                    "match": "(?:\\@|\\\\)(?:ref)(?:\\s+(\\S*))?(?:\\s+(\"(?:(?:\\\\\")|[^\"])*\"))?",
+                    "name": "constant.other.docs.tag.qore",
+                    "captures":{
+                        "1": {
+                            "name": "entity.other.docs.ref.qore"
+                        },
+                        "2": {
+                            "name": "string.other.docs.ref.qore"
+                        }
+                    }
+                },
+                {
+                    "match": "(?:\\@|\\\\)(?:subpage)(?:\\s+(\\S*))?(?:\\s+(.*))?$",
+                    "name": "constant.other.docs.tag.qore",
+                    "captures":{
+                        "1": {
+                            "name": "entity.other.docs.subpage.tag.qore"
+                        },
+                        "2": {
+                            "name": "string.other.docs.subpage.qore"
+                        }
+                    }
                 }
             ]
         },
