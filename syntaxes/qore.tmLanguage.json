@@ -177,7 +177,7 @@
         "doc_tags": {
             "patterns": [
                 {
-                    "match": "((\\@|\\\\)(brief|endcode|note|return|sa|see|tableofcontents|throw))",
+                    "match": "((\\@|\\\\)(brief|endcode|note|return|sa|see|since|tableofcontents|throw))",
                     "name": "constant.other.docs.tag.qore"
                 },
                 {
