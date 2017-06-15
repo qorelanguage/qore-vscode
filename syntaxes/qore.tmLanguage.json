@@ -667,7 +667,7 @@
         "strings2": {
             "name": "string.quoted.single.qore",
             "begin": "'",
-            "end": "(\\\\'|[^'])*'",
+            "end": "'",
             "patterns": [
                 {
                     "include": "#format_chars"
