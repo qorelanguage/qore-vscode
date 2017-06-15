@@ -177,14 +177,6 @@
         "doc_tags": {
             "patterns": [
                 {
-                    "match": "((\\@|\\\\)(brief|endcode|note|return|sa|see|since|tableofcontents|throw))",
-                    "name": "constant.other.docs.tag.qore"
-                },
-                {
-                    "match": "((\\\\)c)",
-                    "name": "constant.other.docs.tag.qore"
-                },
-                {
                     "match": "(?:\\@|\\\\)(?:code)(\\{[^{}]*\\})?",
                     "name": "constant.other.docs.tag.qore",
                     "captures":{
@@ -288,6 +280,22 @@
                             "name": "string.other.docs.subpage.qore"
                         }
                     }
+                },
+                {
+                    "match": "((\\@|\\\\)(brief|copy(brief|details|doc|right)|date|def|deprecated|else(if)?|endcode|example|file|if(not)?|note|relate(d|s)(also)?|remark(s)?|result|return(s)?|retval|sa|see|since|tableofcontents|todo|throw(s)?|verbatim|version|warning))",
+                    "name": "constant.other.docs.tag.qore"
+                },
+                {
+                    "match": "((\\@|\\\\)(a|b|c|e|n|p))",
+                    "name": "constant.other.docs.tag.qore"
+                },
+                {
+                    "match": "((\\@|\\\\)[$@&~<>#%\".|])",
+                    "name": "constant.other.docs.tag.qore"
+                },
+                {
+                    "match": "((\\@|\\\\)\\\\)",
+                    "name": "constant.other.docs.tag.qore"
                 }
             ]
         },
