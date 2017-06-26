@@ -2,7 +2,7 @@
     "name": "qore-vscode",
     "displayName": "qore",
     "description": "Qore Language Support",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "publisher": "qoretechnologies",
     "engines": {
         "vscode": "^1.5.0"
@@ -11,18 +11,26 @@
     "bugs": {
         "url": "https://github.com/qorelanguage/qore-vscode/issues"
     },
-    "homepage": "https://github.com/qorelanguage/qore-vscode/blob/master/README.md",
+    "homepage": "https://github.com/qorelanguage/qore-vscode",
     "categories": [
         "Languages",
         "Linters",
         "Other"
     ],
+    "galleryBanner": {
+        "color": "#9ccb3b",
+        "theme": "light"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/qorelanguage/qore-vscode"
+    },
     "keywords": [
         "qore",
         "language",
         "programming",
-        "programming_language",
-        "language_server"
+        "programminglanguage",
+        "languageserver"
     ],
     "activationEvents": [
         "onLanguage:qore"
@@ -50,15 +58,15 @@
                     "default": false,
                     "description": "Log QLS operations."
                 },
-                "qore.logVerbosity": {
-                    "type": "number",
-                    "default": 0,
-                    "description": "Verbosity of QLS logging. From 0 to 2."
-                },
                 "qore.logFile": {
                     "type": ["string", "null"],
                     "default": null,
                     "description": "Specifies the QLS log file path. If logging is turned on, all the operations will be logged to this file."
+                },
+                "qore.logVerbosity": {
+                    "type": "number",
+                    "default": 0,
+                    "description": "Verbosity of QLS logging. From 0 to 2."
                 },
                 "qore.appendToLog": {
                     "type": "boolean",

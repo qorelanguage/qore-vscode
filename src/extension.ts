@@ -13,8 +13,8 @@ export function activate(context: ExtensionContext) {
     // Find out if Qore and the astparser module are present.
     let results = child_process.spawnSync("qore", ["-ne", "%requires astparser\nint x = 1; x++;"]);
     let qlsOk = false;
-    /*if (results.status == 0)
-        qlsOk = true;*/
+    if (results.status == 0)
+        qlsOk = true;
 
     // Language server command-line arguments
     let extensionDir = vscode.extensions.getExtension("qoretechnologies.qore-vscode").extensionPath;
