@@ -1,6 +1,6 @@
 {
     "name": "qore-vscode",
-    "displayName": "qore",
+    "displayName": "Qore",
     "description": "Qore Language Support",
     "version": "0.1.0",
     "publisher": "qoretechnologies",
@@ -56,12 +56,12 @@
                 "qore.logging": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Log QLS operations."
+                    "description": "Whether to log QLS operations."
                 },
                 "qore.logFile": {
                     "type": ["string", "null"],
                     "default": null,
-                    "description": "Specifies the QLS log file path. If logging is turned on, all the operations will be logged to this file."
+                    "description": "Specifies QLS log file path. If logging is turned on, all the operations will be logged to this file."
                 },
                 "qore.logVerbosity": {
                     "type": "number",

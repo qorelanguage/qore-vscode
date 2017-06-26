@@ -21,6 +21,6 @@ Most of the features (except syntax highlighting) are provided by QLS (Qore Lang
 If you want to log output of QLS, you can use the following configuration settings:
 
 - `qore.logging` Boolean flag to set logging on or off.
-- `qore.logFile` String specifying the QLS log file path. If logging is turned on, all the operations will be logged to this file.
+- `qore.logFile` String specifying QLS log file path. If logging is turned on, all the operations will be logged to this file.
 - `qore.logVerbosity` Verbosity of QLS logging. From 0 to 2.
 - `qore.appendToLog` Boolean flag specifying whether to append to QLS log file or to overwrite it on each restart.
