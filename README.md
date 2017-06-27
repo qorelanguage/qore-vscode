@@ -9,9 +9,9 @@
 This extension adds support for the following:
 
 - Syntax highlighting
-- Hover Info
-- Goto Definition
-- Find References
+- Hover info
+- Goto definition
+- Find references
 - Document symbol search
 - Workspace symbol search
 - Syntax error reporting
