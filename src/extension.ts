@@ -65,7 +65,8 @@ export function activate(context: ExtensionContext) {
                 workspace.createFileSystemWatcher('**/*.qjob'),
                 workspace.createFileSystemWatcher('**/*.qclass'),
                 workspace.createFileSystemWatcher('**/*.qconst'),
-                workspace.createFileSystemWatcher('**/*.qsm')
+                workspace.createFileSystemWatcher('**/*.qsm'),
+                workspace.createFileSystemWatcher('**/*.qconn')
             ]
         }
     }
