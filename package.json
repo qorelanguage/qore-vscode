@@ -40,7 +40,7 @@
         "languages": [{
             "id": "qore",
             "aliases": ["Qore", "qore", "qr"],
-            "extensions": [".q",".qm",".qtest",".ql",".qc",".qsd",".qfd",".qwf",".qjob",".qclass",".qconst",".qsm"],
+            "extensions": [".q",".qm",".qtest",".ql",".qc",".qsd",".qfd",".qwf",".qjob",".qclass",".qconst",".qsm",".qconn"],
             "firstLine": "^#!.*mode:[ ]*qore",
             "configuration": "./qore.configuration.json"
         }],
