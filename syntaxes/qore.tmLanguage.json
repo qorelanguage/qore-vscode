@@ -195,6 +195,15 @@
                     }
                 },
                 {
+                    "match": "(?:\\@|\\\\)(?:c)(?:\\s+((?:\\w|-|_)*))?",
+                    "name": "constant.other.docs.tag.qore",
+                    "captures":{
+                        "1": {
+                            "name": "entity.other.docs.c.qore"
+                        }
+                    }
+                },
+                {
                     "match": "(?:\\@|\\\\)(?:param)(?:\\s+(\\S*))?",
                     "name": "constant.other.docs.tag.qore",
                     "captures":{
@@ -282,11 +291,11 @@
                     }
                 },
                 {
-                    "match": "((\\@|\\\\)(brief|copy(brief|details|doc|right)|date|def|deprecated|else(if)?|endcode|example|file|if(not)?|note|relate(d|s)(also)?|remark(s)?|result|return(s)?|retval|sa|see|since|tableofcontents|todo|throw(s)?|verbatim|version|warning))",
+                    "match": "((\\@|\\\\)(brief|copy(brief|details|doc|right)|date|def|deprecated|else(if)?|endcode|example|file|if(not)?|note|relate(d|s)(also)?|remark(s)?|result|return(s)?|retval|sa|see|since|tableofcontents|todo|throw(s)?|(end)?verbatim|version|warning))",
                     "name": "constant.other.docs.tag.qore"
                 },
                 {
-                    "match": "((\\@|\\\\)(a|b|c|e|n|p))",
+                    "match": "((\\@|\\\\)(a|b|e|n|p))",
                     "name": "constant.other.docs.tag.qore"
                 },
                 {
