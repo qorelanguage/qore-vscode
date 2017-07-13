@@ -213,6 +213,15 @@
                     }
                 },
                 {
+                    "match": "(?:\\@|\\\\)(?:throw(s)?|exception)(?:\\s+(\\S*))?",
+                    "name": "constant.other.docs.tag.qore",
+                    "captures":{
+                        "1": {
+                            "name": "entity.other.docs.exception.qore"
+                        }
+                    }
+                },
+                {
                     "match": "(?:\\@|\\\\)(?:mainpage)(.*)$",
                     "name": "constant.other.docs.tag.qore",
                     "captures":{
@@ -291,7 +300,7 @@
                     }
                 },
                 {
-                    "match": "((\\@|\\\\)(brief|copy(brief|details|doc|right)|date|def|deprecated|else(if)?|endcode|example|file|if(not)?|note|relate(d|s)(also)?|remark(s)?|result|return(s)?|retval|sa|see|since|tableofcontents|todo|throw(s)?|(end)?verbatim|version|warning))",
+                    "match": "((\\@|\\\\)(brief|copy(brief|details|doc|right)|date|def|deprecated|else(if)?|endcode|example|file|if(not)?|note|relate(d|s)(also)?|remark(s)?|result|return(s)?|retval|sa|see|since|tableofcontents|todo|(end)?verbatim|version|warning))",
                     "name": "constant.other.docs.tag.qore"
                 },
                 {
