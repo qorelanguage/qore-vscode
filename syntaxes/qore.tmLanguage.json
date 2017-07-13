@@ -343,7 +343,7 @@
         "keywords": {
             "patterns": [
                 {
-                    "match": "\\b(break|case|continue|default|do|else|for|if|return|switch|thread_exit|while)\\b",
+                    "match": "\\b(break|case|continue|default|do|else|for(each)?|if|in|return|switch|thread_exit|while)\\b",
                     "name": "keyword.control.qore"
                 },
                 {
