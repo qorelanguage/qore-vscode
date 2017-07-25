@@ -213,7 +213,7 @@
                     }
                 },
                 {
-                    "match": "(?:\\@|\\\\)(?:throw(s)?|exception)(?:\\s+(\\S*))?",
+                    "match": "(?:\\@|\\\\)(?:throw(?:s)?|exception)(?:\\s+(\\S*))?",
                     "name": "constant.other.docs.tag.qore",
                     "captures":{
                         "1": {
