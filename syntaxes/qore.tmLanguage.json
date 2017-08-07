@@ -604,7 +604,7 @@
                     "name": "storage.modifier.function.qore"
                 },
                 {
-                    "match": "\\b(const|deprecated|final|my|our|public|private|static)\\b",
+                    "match": "\\b(deprecated|final|my|our|public|private|static)\\b",
                     "name": "storage.modifier.variable.qore"
                 }
             ]
@@ -616,12 +616,20 @@
                     "name": "storage.type.class.qore"
                 },
                 {
-                    "match": "\\bnamespace\\b",
-                    "name": "storage.type.namespace.qore"
+                    "match": "\\const\\b",
+                    "name": "storage.type.const.qore"
+                },
+                {
+                    "match": "\\hashdecl\\b",
+                    "name": "storage.type.hashdecl.qore"
                 },
                 {
                     "match": "\\bmodule\\b",
                     "name": "storage.type.module.qore"
+                },
+                {
+                    "match": "\\bnamespace\\b",
+                    "name": "storage.type.namespace.qore"
                 },
                 {
                     "match": "\\bsub\\b",
@@ -645,7 +653,7 @@
                 },
                 {
                     "match": "\\b(callref|closure|code)\\b",
-                    "name": "storage.type.closure.qore"
+                    "name": "storage.type.code.qore"
                 },
                 {
                     "match": "\\bdata\\b",
