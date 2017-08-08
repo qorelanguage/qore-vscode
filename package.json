@@ -2,7 +2,7 @@
     "name": "qore-vscode",
     "displayName": "Qore",
     "description": "Qore Language Support",
-    "version": "0.1.14",
+    "version": "0.1.15",
     "publisher": "qoretechnologies",
     "engines": {
         "vscode": "^1.5.0"
