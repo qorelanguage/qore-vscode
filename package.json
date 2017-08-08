@@ -53,6 +53,11 @@
             "type": "object",
             "title": "Qore configuration",
             "properties": {
+                "qore.useQLS": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Whether to use QLS for providing Qore code information."
+                },
                 "qore.logging": {
                     "type": "boolean",
                     "default": false,

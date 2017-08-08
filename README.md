@@ -22,6 +22,7 @@ Most of the features (except syntax highlighting) are provided by [QLS](https://
 
 If you want to log output of QLS, you can use the following configuration settings:
 
+- `qore.useQLS` Boolean flag to turn on/off usage of QLS for providing Qore code information. [default=true]
 - `qore.logging` Boolean flag to set logging on or off. [default=false]
 - `qore.logFile` String specifying QLS log file path. If logging is turned on, all the operations will be logged to this file. If not defined, `~/.qls.log` is used on Unix-like systems and `%AppData%\QLS\qls.log` on Windows.
 - `qore.logVerbosity` Verbosity of QLS logging. From 0 to 2. [default=0]

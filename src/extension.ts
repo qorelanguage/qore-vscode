@@ -16,6 +16,9 @@ export function activate(context: ExtensionContext) {
     if (results.status == 0)
         qlsOk = true;
 
+    // Find out if QLS should run.
+    let useQLS = vscode.workspace.getConfiguration("qore").get("useQLS");
+
     // Language server command-line arguments
     let extensionDir = vscode.extensions.getExtension("qoretechnologies.qore-vscode").extensionPath;
     let serverArgs = [extensionDir + '/qls/qls.q'];
@@ -73,18 +76,20 @@ export function activate(context: ExtensionContext) {
     let lc = new LanguageClient('qls', 'Qore Language Server', serverOptions, clientOptions);
     let disposable;
 
-    // Create the language client and start the client.
-    if (qlsOk) {
-        disposable = lc.start();
-        console.log('Started QLS');
+    if (useQLS) {
+        // Create the language client and start the client.
+        if (qlsOk) {
+            disposable = lc.start();
+            console.log('Started QLS');
 
-        // Push the disposable to the context's subscriptions so that the
-        // client can be deactivated on extension deactivation
-        context.subscriptions.push(disposable);
-    }
-    else {
-        console.log("Qore and/or astparser module are not present -> won't run QLS");
-        vscode.window.showWarningMessage("Qore or Qore's astparser module are not present. Qore language server will not be started.");
+            // Push the disposable to the context's subscriptions so that the
+            // client can be deactivated on extension deactivation
+            context.subscriptions.push(disposable);
+        }
+        else {
+            console.log("Qore and/or astparser module are not present -> won't run QLS");
+            vscode.window.showWarningMessage("Qore or Qore's astparser module are not present. Qore language server will not be started.");
+        }
     }
 }
 
