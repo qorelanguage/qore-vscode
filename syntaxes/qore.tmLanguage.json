@@ -420,6 +420,10 @@
                     "name": "keyword.operator.assignment.qore"
                 },
                 {
+                    "match": "(:=)",
+                    "name": "keyword.operator.assignment.weakref.qore"
+                },
+                {
                     "match": "(\\-\\-|\\+\\+)",
                     "name": "keyword.operator.increment-decrement.qore"
                 },
