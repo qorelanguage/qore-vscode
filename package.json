@@ -2,7 +2,7 @@
     "name": "qore-vscode",
     "displayName": "Qore",
     "description": "Qore Language Support",
-    "version": "0.1.20",
+    "version": "0.1.21",
     "publisher": "qoretechnologies",
     "engines": {
         "vscode": "^1.5.0"
@@ -41,7 +41,7 @@
             "id": "qore",
             "aliases": ["Qore", "qore", "qr"],
             "extensions": [".q",".qm",".qtest",".ql",".qc",".qsd",".qfd",".qwf",".qjob",".qclass",".qconst",".qsm"],
-            "firstLine": "^#!.*mode:[ ]*qore",
+            "firstLine": "^((#.*mode:[ ]*qore)|(#!/usr/bin/env qore))",
             "configuration": "./qore.configuration.json"
         }],
         "grammars": [{
