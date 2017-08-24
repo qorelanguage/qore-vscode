@@ -620,11 +620,11 @@
                     "name": "storage.type.class.qore"
                 },
                 {
-                    "match": "\\const\\b",
+                    "match": "\\bconst\\b",
                     "name": "storage.type.const.qore"
                 },
                 {
-                    "match": "\\hashdecl\\b",
+                    "match": "\\bhashdecl\\b",
                     "name": "storage.type.hashdecl.qore"
                 },
                 {
