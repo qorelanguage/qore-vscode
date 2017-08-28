@@ -2,7 +2,7 @@
     "name": "qore-vscode",
     "displayName": "Qore",
     "description": "Qore Language Support",
-    "version": "0.1.23",
+    "version": "0.1.24",
     "publisher": "qoretechnologies",
     "author": {
         "name": "Ondřej Musil",
@@ -23,8 +23,8 @@
     ],
     "icon": "icon.png",
     "galleryBanner": {
-        "color": "#9ccb3b",
-        "theme": "light"
+        "color": "#555555",
+        "theme": "dark"
     },
     "repository": {
         "type": "git",
