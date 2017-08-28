@@ -2,7 +2,7 @@
     "name": "qore-vscode",
     "displayName": "Qore",
     "description": "Qore language support for VS Code",
-    "version": "0.1.25",
+    "version": "0.1.26",
     "publisher": "qoretechnologies",
     "author": {
         "name": "Ondřej Musil",
@@ -23,7 +23,7 @@
     ],
     "icon": "icon.png",
     "galleryBanner": {
-        "color": "#555555",
+        "color": "#333333",
         "theme": "dark"
     },
     "repository": {
