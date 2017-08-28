@@ -1,8 +1,8 @@
 {
     "name": "qore-vscode",
     "displayName": "Qore",
-    "description": "Qore Language Support",
-    "version": "0.1.24",
+    "description": "Qore language support for VS Code",
+    "version": "0.1.25",
     "publisher": "qoretechnologies",
     "author": {
         "name": "Ondřej Musil",
