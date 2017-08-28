@@ -2,8 +2,12 @@
     "name": "qore-vscode",
     "displayName": "Qore",
     "description": "Qore Language Support",
-    "version": "0.1.22",
+    "version": "0.1.23",
     "publisher": "qoretechnologies",
+    "author": {
+        "name": "Ondřej Musil",
+        "email": "ondrej.musil@qoretechnologies.com"
+    },
     "engines": {
         "vscode": "^1.5.0"
     },
@@ -17,6 +21,7 @@
         "Linters",
         "Other"
     ],
+    "icon": "icon.png",
     "galleryBanner": {
         "color": "#9ccb3b",
         "theme": "light"
