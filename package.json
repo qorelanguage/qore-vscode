@@ -2,7 +2,7 @@
     "name": "qore-vscode",
     "displayName": "Qore",
     "description": "Qore language support for VS Code",
-    "version": "0.1.26",
+    "version": "0.2.0",
     "publisher": "qoretechnologies",
     "author": {
         "name": "Ondřej Musil",
@@ -12,10 +12,14 @@
         "vscode": "^1.5.0"
     },
     "license": "SEE LICENSE IN LICENSE.txt",
+    "homepage": "https://github.com/qorelanguage/qore-vscode",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/qorelanguage/qore-vscode"
+    },
     "bugs": {
         "url": "https://github.com/qorelanguage/qore-vscode/issues"
     },
-    "homepage": "https://github.com/qorelanguage/qore-vscode",
     "categories": [
         "Languages",
         "Linters",
@@ -25,10 +29,6 @@
     "galleryBanner": {
         "color": "#333333",
         "theme": "dark"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/qorelanguage/qore-vscode"
     },
     "keywords": [
         "qore",
