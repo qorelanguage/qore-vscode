@@ -1,5 +1,9 @@
 ## Changelog
 
+### 0.2.3
+
+* **Fix:** Fixed QLS crash when hovering superclass names
+
 ### 0.2.2
 
 * **Fix:** Removed left-over QLS debug prints
