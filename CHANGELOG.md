@@ -1,5 +1,9 @@
 ## Changelog
 
+### 0.2.4
+
+* **Change:** Configuration settings now have `window` scope and therefore cannot be defined on a per-workspace basis.
+
 ### 0.2.3
 
 * **Fix:** Fixed QLS crash when hovering superclass names
