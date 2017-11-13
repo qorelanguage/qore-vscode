@@ -1,21 +1,26 @@
 ## Changelog
 
+### 0.2.5
+
+* **Fix:** Fixed QLS crashes caused by VS Code trying to open non-local files.
+* **New:** Along with new Qore 0.8.13.1 range operator is supported.
+
 ### 0.2.4
 
 * **Change:** Configuration settings now have `window` scope and therefore cannot be defined on a per-workspace basis.
 
 ### 0.2.3
 
-* **Fix:** Fixed QLS crash when hovering superclass names
+* **Fix:** Fixed QLS crash when hovering superclass names.
 
 ### 0.2.2
 
-* **Fix:** Removed left-over QLS debug prints
+* **Fix:** Removed left-over QLS debug prints.
 
 ### 0.2.1
 
-* **Fix:** Fixed potential QLS crash
+* **Fix:** Fixed potential QLS crash.
 
 ### 0.2.0
 
-* **New:** Added syntax highlighting for function names
+* **New:** Added syntax highlighting for function names.
