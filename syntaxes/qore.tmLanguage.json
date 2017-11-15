@@ -670,6 +670,10 @@
                     "name": "storage.type.any.qore"
                 },
                 {
+                    "match": "\\bauto\\b",
+                    "name": "storage.type.auto.qore"
+                },
+                {
                     "match": "\\b(callref|closure|code)\\b",
                     "name": "storage.type.code.qore"
                 },

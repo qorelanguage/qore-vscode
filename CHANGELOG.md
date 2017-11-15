@@ -1,5 +1,9 @@
 ## Changelog
 
+### 0.2.6
+
+* **New:** Added syntax highlighting for the `auto` type.
+
 ### 0.2.5
 
 * **Fix:** Fixed QLS crashes caused by VS Code trying to open non-local files.
