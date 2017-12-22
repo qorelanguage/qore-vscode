@@ -2,7 +2,7 @@
     "name": "qore-vscode",
     "displayName": "Qore",
     "description": "Qore language support for VS Code",
-    "version": "0.2.6",
+    "version": "0.2.7",
     "publisher": "qoretechnologies",
     "author": {
         "name": "Ondřej Musil",
@@ -23,7 +23,8 @@
     "categories": [
         "Languages",
         "Linters",
-        "Other"
+        "Other",
+        "Snippets"
     ],
     "icon": "icon.png",
     "galleryBanner": {
@@ -53,6 +54,10 @@
             "language": "qore",
             "scopeName": "source.qore",
             "path": "./syntaxes/qore.tmLanguage.json"
+        }],
+        "snippets" : [{
+            "language" : "qore",
+            "path" : "./snippets/qore.json"
         }],
         "configuration": {
             "type": "object",

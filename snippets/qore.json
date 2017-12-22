@@ -1,0 +1,198 @@
+{
+    "qore_namespace": {
+        "prefix": "namespace",
+        "description": "qore namespace",
+        "body": [
+            "#!",
+            "namespace ${1:MyNamespace} {",
+            "    ${2}",
+            "} # namespace ${1}"
+        ]
+    },
+    "qore_sub": {
+        "prefix": "sub",
+        "description": "qore function (sub)",
+        "body": [
+            "#!",
+            "/**",
+            "  */",
+            "auto sub ${1:my_func}() {",
+            "    ${2}",
+            "}"
+        ]
+    },
+    "qore_genericclass": {
+        "prefix": "class",
+        "description": "qore class",
+        "body": [
+            "#!",
+            "/**",
+            " */",
+            "class ${1:MyClass} {",
+            "",
+            "    public {",
+            "    }",
+            "",
+            "    private {",
+            "    }",
+            "",
+            "    #!",
+            "    /**",
+            "     */",
+            "    constructor() {",
+            "        ${2}",
+            "    }",
+            "",
+            "} # class ${1}"
+        ]
+    },
+    "qore_if": {
+        "prefix": "if",
+        "description": "qore if",
+        "body": [
+            "if (${1}) {",
+            "    ${2}",
+            "}"
+        ]
+    },
+    "qore_ifandelse": {
+        "prefix": "if",
+        "description": "qore if else",
+        "body": [
+            "if (${1}) {",
+            "    ${2}",
+            "} else {",
+            "    ${3}",
+            "}"
+        ]
+    },
+    "qore_else": {
+        "prefix": "else",
+        "description": "qore else",
+        "body": [
+            "else {",
+            "    ${1}",
+            "}"
+        ]
+    },
+    "qore_elsewithif": {
+        "prefix": "else",
+        "description": "qore else with if",
+        "body": [
+            "else if (${1}) {",
+            "    ${2}",
+            "}"
+        ]
+    },
+    "qore_for": {
+        "prefix": "for",
+        "description": "qore for",
+        "body": [
+            "for (int ${1:i} = 0; ${1} < ${2:10}; ${1}++) {",
+            "    ${3}",
+            "}"
+        ]
+    },
+    "qore_foreach": {
+        "prefix": "foreach",
+        "description": "qore foreach",
+        "body": [
+            "foreach my auto ${1:i} in (${2:a_list}) {",
+            "    ${3}",
+            "}"
+        ]
+    },
+    "qore_switch": {
+        "prefix": "switch",
+        "description": "qore switch",
+        "body": [
+            "switch (${1}) {",
+            "    case ${2}:",
+            "        break;",
+            "    default:",
+            "        ${3}",
+            "}"
+        ]
+    },
+    "qore_while": {
+        "prefix": "while",
+        "description": "qore while",
+        "body": [
+            "while (${1:True}) {",
+            "    ${2}",
+            "}"
+        ]
+    },
+    "qore_do": {
+        "prefix": "do",
+        "description": "qore do",
+        "body": [
+            "do {",
+            "    ${1}",
+            "} while (${2:True});"
+        ]
+    },
+    "qore_throw": {
+        "prefix": "throw",
+        "description": "qore throw",
+        "body": "throw \"${1:ERROR}\", ${2:\"error description\"};\n"
+    },
+    "qore_trycatch": {
+        "prefix": "try",
+        "description": "qore trycatch",
+        "body": [
+            "try {",
+            "    ${1}",
+            "} catch (hash<ExceptionInfo> ex) {",
+            "    ${2}",
+            "}"
+        ]
+    },
+    "qore_on_error": {
+        "prefix": "on_error",
+        "description": "qore on_error",
+        "body": [
+            "on_error {",
+            "    ${1}",
+            "}"
+        ]
+    },
+    "qore_on_success": {
+        "prefix": "on_success",
+        "description": "qore on_success",
+        "body": [
+            "on_success {",
+            "    ${1}",
+            "}"
+        ]
+    },
+    "qore_on_exit": {
+        "prefix": "on_exit",
+        "description": "qore on_exit",
+        "body": [
+            "on_exit {",
+            "    ${1}",
+            "}"
+        ]
+    },
+    "qore_hashiterator": {
+        "prefix": "HashIterator",
+        "description": "qore hash iterator",
+        "body": [
+            "HashIterator ${1:it}(${2});",
+            "while (${1}.next()) {",
+            "    ${3}",
+            "}"
+        ]
+    },
+    "qore_listterator": {
+        "prefix": "ListIterator",
+        "description": "qore list iterator",
+        "body": [
+            "ListIterator ${1:it}(${2});",
+            "while (${1}.next()) {",
+            "    ${3}",
+            "}"
+        ]
+    }
+}
