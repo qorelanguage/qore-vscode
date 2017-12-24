@@ -1,5 +1,9 @@
 ## Changelog
 
+### 0.2.7
+
+* **New:** basic code snippets added
+
 ### 0.2.6
 
 * **New:** Added syntax highlighting for the `auto` type.
