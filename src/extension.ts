@@ -1,53 +1,53 @@
 'use strict';
 
-import * as path from 'path';
-import * as vscode from 'vscode';
 import * as child_process from 'child_process';
+import * as vscode from 'vscode';
+import * as languageclient from 'vscode-languageclient';
 
-import { workspace, Disposable, ExtensionContext, window } from 'vscode';
-import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, TransportKind } from 'vscode-languageclient';
-
-export function activate(context: ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
     console.log('Activating qore-vscode extension');
 
     // Find out if Qore and the astparser module are present.
-    let results = child_process.spawnSync("qore", ["-ne", "%requires astparser\n%requires json\nint x = 1; x++;"]);
+    let qore_executable: string = vscode.workspace.getConfiguration("qore").get("executable") || "qore";
+
+    let results = child_process.spawnSync(qore_executable, ["-ne", "%requires astparser\n%requires json\nint x = 1; x++;"]);
     let qlsOk = false;
-    if (results.status == 0)
+    if (results.status == 0) {
         qlsOk = true;
+    }
 
     // Find out if QLS should run.
     let useQLS = vscode.workspace.getConfiguration("qore").get("useQLS");
 
     // Language server command-line arguments
-    let extensionDir = vscode.extensions.getExtension("qoretechnologies.qore-vscode").extensionPath;
+    let extensionDir = context.extensionPath;
     let serverArgs = [extensionDir + '/qls/qls.q'];
     let debugServerArgs = [extensionDir + '/qls/qls.q'];
 
     // Language server options
-    let serverOptions: ServerOptions;
+    let serverOptions: languageclient.ServerOptions;
     let DEV_MODE = false;
     if (DEV_MODE) {
-        serverOptions = () => new Promise<child_process.ChildProcess>((resolve, reject) => {
-            function spawnServer(...args: string[]): child_process.ChildProcess {
-                let childProcess = child_process.spawn('qore', serverArgs);
+        serverOptions = () => new Promise<child_process.ChildProcess>((resolve) => {
+            function spawnServer(): child_process.ChildProcess {
+                let childProcess = child_process.spawn(qore_executable, serverArgs);
                 childProcess.stderr.on('data', data => { console.log(`stderr: ${data}`); });
                 childProcess.stdout.on('data', data => { console.log(`stdout: ${data}`); });
                 return childProcess; // Uses stdin/stdout for communication
             }
 
-            resolve(spawnServer())
+            resolve(spawnServer());
         });
     }
     else {
         serverOptions = {
-            run: {command: 'qore', args: serverArgs/*, opts: serverOpts */},
-            debug: {command: 'qore', args: debugServerArgs/*, opts: debugServerOpts */}
-        }
+            run: {command: qore_executable, args: serverArgs/*, opts: serverOpts */},
+            debug: {command: qore_executable, args: debugServerArgs/*, opts: debugServerOpts */}
+        };
     }
 
     // Options to control the language client
-    let clientOptions: LanguageClientOptions = {
+    let clientOptions: languageclient.LanguageClientOptions = {
         // Docs regarding documentSelector:
         // https://code.visualstudio.com/Docs/extensionAPI/vscode-api#DocumentSelector
         // https://code.visualstudio.com/Docs/extensionAPI/vscode-api#DocumentFilter
@@ -57,23 +57,23 @@ export function activate(context: ExtensionContext) {
             configurationSection: 'qore',
             // Notify the server about file changes to qore files contained in the workspace
             fileEvents: [
-                workspace.createFileSystemWatcher('**/*.q'),
-                workspace.createFileSystemWatcher('**/*.qm'),
-                workspace.createFileSystemWatcher('**/*.qtest'),
-                workspace.createFileSystemWatcher('**/*.ql'),
-                workspace.createFileSystemWatcher('**/*.qc'),
-                workspace.createFileSystemWatcher('**/*.qsd'),
-                workspace.createFileSystemWatcher('**/*.qfd'),
-                workspace.createFileSystemWatcher('**/*.qwf'),
-                workspace.createFileSystemWatcher('**/*.qjob'),
-                workspace.createFileSystemWatcher('**/*.qclass'),
-                workspace.createFileSystemWatcher('**/*.qconst'),
-                workspace.createFileSystemWatcher('**/*.qsm')
+                vscode.workspace.createFileSystemWatcher('**/*.q'),
+                vscode.workspace.createFileSystemWatcher('**/*.qm'),
+                vscode.workspace.createFileSystemWatcher('**/*.qtest'),
+                vscode.workspace.createFileSystemWatcher('**/*.ql'),
+                vscode.workspace.createFileSystemWatcher('**/*.qc'),
+                vscode.workspace.createFileSystemWatcher('**/*.qsd'),
+                vscode.workspace.createFileSystemWatcher('**/*.qfd'),
+                vscode.workspace.createFileSystemWatcher('**/*.qwf'),
+                vscode.workspace.createFileSystemWatcher('**/*.qjob'),
+                vscode.workspace.createFileSystemWatcher('**/*.qclass'),
+                vscode.workspace.createFileSystemWatcher('**/*.qconst'),
+                vscode.workspace.createFileSystemWatcher('**/*.qsm')
             ]
         }
-    }
+    };
 
-    let lc = new LanguageClient('qls', 'Qore Language Server', serverOptions, clientOptions);
+    let lc = new languageclient.LanguageClient('qls', 'Qore Language Server', serverOptions, clientOptions);
     let disposable;
 
     if (useQLS) {
@@ -89,10 +89,41 @@ export function activate(context: ExtensionContext) {
         else {
             console.log("Qore and/or astparser module are not present -> won't run QLS");
             vscode.window.showWarningMessage("Qore or Qore's astparser module are not present. Qore language server will not be started.");
+            open_in_browser("https://github.com/qorelanguage/qore/wiki/General-Source-and-Download-Info");
         }
     }
 }
 
 // this method is called when your extension is deactivated
 export function deactivate() {
+}
+
+function open_in_browser(url: string) {
+    // open it in external tool - system should find appropriate handlers for schemas
+    // vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(url));
+    let executable: string;
+    switch (process.platform) {
+        case 'aix':
+        case 'freebsd':
+        case 'linux':
+        case 'openbsd':
+        case 'sunos':
+            executable = 'xdg-open';
+            break;
+        case 'darwin':
+            executable = 'open';
+            break;
+        case 'win32':
+            executable = 'start';
+            break;
+        default:
+            executable = '';
+    }
+    let command: string = executable + ' "' + url +'"';
+    try {
+        child_process.execSync(command);
+    }
+    catch (e) {
+        console.log(e);
+    }
 }
