@@ -95,7 +95,7 @@
                     "type": "boolean",
                     "default": true,
                     "scope": "window",
-                    "description": "Whether to use QLS for providing Qore code information."
+                    "description": "Whether to use Qore Language Server (QLS) for providing Qore code information."
                 },
                 "qore.logging": {
                     "type": "boolean",

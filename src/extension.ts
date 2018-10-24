@@ -3,14 +3,15 @@
 import * as child_process from 'child_process';
 import * as vscode from 'vscode';
 import * as languageclient from 'vscode-languageclient';
+import * as path from 'path';
 
 export async function activate(context: vscode.ExtensionContext) {
     console.log('Activating qore-vscode extension');
 
-    // Find out if Qore and the astparser module are present.
     let qore_executable: string = vscode.workspace.getConfiguration("qore").get("executable") || "qore";
 
-    let results = child_process.spawnSync(qore_executable, ["-ne", "%requires astparser\n%requires json\nint x = 1; x++;"]);
+    // Find out if Qore and the astparser module are present.
+    let results = child_process.spawnSync(qore_executable, ["-l astparser -l json -ne \"int x = 1; x++;\""], {shell: true});
     let qlsOk = false;
     if (results.status == 0) {
         qlsOk = true;
@@ -21,8 +22,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
     // Language server command-line arguments
     let extensionDir = context.extensionPath;
-    let serverArgs = [extensionDir + '/qls/qls.q'];
-    let debugServerArgs = [extensionDir + '/qls/qls.q'];
+    let serverArgs = [path.join(extensionDir, "qls", "qls.q")];
+    let debugServerArgs = [path.join(extensionDir, "qls", "qls.q")];
 
     // Language server options
     let serverOptions: languageclient.ServerOptions;
@@ -30,7 +31,7 @@ export async function activate(context: vscode.ExtensionContext) {
     if (DEV_MODE) {
         serverOptions = () => new Promise<child_process.ChildProcess>((resolve) => {
             function spawnServer(): child_process.ChildProcess {
-                let childProcess = child_process.spawn(qore_executable, serverArgs);
+                let childProcess = child_process.spawn(qore_executable, serverArgs, {shell: true});
                 childProcess.stderr.on('data', data => { console.log(`stderr: ${data}`); });
                 childProcess.stdout.on('data', data => { console.log(`stdout: ${data}`); });
                 return childProcess; // Uses stdin/stdout for communication
@@ -89,7 +90,7 @@ export async function activate(context: vscode.ExtensionContext) {
         else {
             console.log("Qore and/or astparser module are not present -> won't run QLS");
             vscode.window.showWarningMessage("Qore or Qore's astparser module are not present. Qore language server will not be started.");
-            open_in_browser("https://github.com/qorelanguage/qore/wiki/General-Source-and-Download-Info");
+            open_in_browser("https://github.com/qorelanguage/qore-vscode/wiki/Visual-Code-for-Qore-Language-Setup");
         }
     }
 }
@@ -119,7 +120,7 @@ function open_in_browser(url: string) {
         default:
             executable = '';
     }
-    let command: string = executable + ' "' + url +'"';
+    let command: string = executable + ' ' + url;
     try {
         child_process.execSync(command);
     }
