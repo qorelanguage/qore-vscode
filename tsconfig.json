@@ -4,10 +4,15 @@
         "target": "es6",
         "outDir": "out",
         "lib": [
-            "es6"
+            "es7",
+            "dom"
         ],
         "sourceMap": true,
-        "rootDir": "."
+        "rootDir": "src",
+        "strict": true,
+        "noUnusedLocals": true,
+        "noImplicitReturns": true,
+        "noUnusedParameters": true
     },
     "exclude": [
         "node_modules",
