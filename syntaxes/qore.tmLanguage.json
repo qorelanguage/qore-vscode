@@ -622,7 +622,7 @@
                     "name": "storage.modifier.function.qore"
                 },
                 {
-                    "match": "\\b(deprecated|final|my|our|public|private|static)\\b",
+                    "match": "\\b(deprecated|final|my|our|public|private|static|transient)\\b",
                     "name": "storage.modifier.variable.qore"
                 }
             ]

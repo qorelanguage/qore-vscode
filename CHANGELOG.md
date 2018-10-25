@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.9
+
+* **New:** Added support for `transient` keyword syntax highlighting.
+
 ## 0.2.8
 
 * **New:** Added support for ranges and new immediate typed hash declarations.
