@@ -5,8 +5,8 @@
     "version": "0.3.0",
     "publisher": "qoretechnologies",
     "author": {
-        "name": "Ondřej Musil",
-        "email": "ondrej.musil@qoretechnologies.com"
+        "name": "Qore Technologies",
+        "email": "vscode@qoretechnologies.com"
     },
     "engines": {
         "vscode": "^1.25.0"
@@ -146,10 +146,10 @@
         "@types/node": "^7.0.71",
         "tslint": "^5.8.0",
         "typescript": "^2.6.1",
-        "vscode": "^1.1.6"
+        "vscode": "^1.1.6",
+        "vsce": "^1.52.0"
     },
     "dependencies": {
-        "vsce": "^1.52.0",
         "vscode-languageclient": "^5.1.1"
     }
 }

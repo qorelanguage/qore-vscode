@@ -2,7 +2,8 @@
 
 ## 0.3.0
 
-* Internal updates.
+* Path to Qore language ineterpreter can be specified in settings
+* Support of MS Windows
 
 ## 0.2.9
 
