@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.1
+
+* Fix: path and URI handling on MS Windows
+* Qore language server updated
+
 ## 0.3.0
 
 * Path to Qore language ineterpreter can be specified in settings
