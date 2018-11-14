@@ -2,7 +2,7 @@
     "name": "qore-vscode",
     "displayName": "Qore",
     "description": "Qore language support for VS Code",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "publisher": "qoretechnologies",
     "author": {
         "name": "Qore Technologies",
@@ -52,20 +52,32 @@
                 ],
                 "extensions": [
                     ".q",
-                    ".qm",
-                    ".qtest",
-                    ".ql",
                     ".qc",
-                    ".qsd",
-                    ".qfd",
-                    ".qwf",
-                    ".qjob",
                     ".qclass",
                     ".qconst",
-                    ".qsm"
+                    ".qfd",
+                    ".qjob",
+                    ".ql",
+                    ".qm",
+                    ".qsd",
+                    ".qsm",
+                    ".qtest",
+                    ".qwf"
                 ],
                 "firstLine": "^((#.*mode:[ ]*qore)|(#!/usr/bin/env qore))",
                 "configuration": "./qore.configuration.json"
+            },
+            {
+                "id": "java",
+                "aliases": [
+                    "Java",
+                    "java"
+                ],
+                "extensions": [
+                    ".java8.qclass",
+                    ".java8.qjob",
+                    ".java8.qsvc"
+                ]
             }
         ],
         "grammars": [

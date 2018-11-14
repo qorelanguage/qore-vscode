@@ -1,14 +1,18 @@
 # Changelog
 
+## 0.3.2
+
+* Made files with extensions `.java8.qclass`, `.java8.qjob` and `.java8.qsvc`  get recognized as Java instead of Qore.
+
 ## 0.3.1
 
-* Fix: path and URI handling on MS Windows
-* Qore language server updated
+* Fixed path and URI handling on MS Windows.
+* Qore language server updated.
 
 ## 0.3.0
 
-* Path to Qore language ineterpreter can be specified in settings
-* Support of MS Windows
+* Path to Qore language interpreter can be specified in settings.
+* Added support for MS Windows.
 
 ## 0.2.9
 
