@@ -1,9 +1,5 @@
 # Changelog
 
-## 0.3.2
-
-* Made files with extensions `.java8.qclass`, `.java8.qjob` and `.java8.qsvc`  get recognized as Java instead of Qore.
-
 ## 0.3.1
 
 * Fixed path and URI handling on MS Windows.
