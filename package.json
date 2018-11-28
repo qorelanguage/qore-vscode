@@ -146,7 +146,7 @@
         "@types/node": "^7.0.71",
         "tslint": "^5.8.0",
         "typescript": "^2.6.1",
-        "vscode": "^1.1.6",
+        "vscode": "^1.1.22",
         "vsce": "^1.52.0"
     },
     "dependencies": {
