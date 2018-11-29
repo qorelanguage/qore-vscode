@@ -31,23 +31,23 @@
         "builtins": {
             "patterns": [
                 {
-                    "match": "\\b(Platform|PlatformOS|PlatformCPU)\\b",
+                    "match": "\\bPlatform(OS|CPU)?\\b",
                     "name": "support.variable.platform.qore"
                 },
                 {
-                    "match": "\\b(Build|BuildHost|Compiler|CFLAGS|LDFLAGS|MACHINE_MSB)\\b",
+                    "match": "\\b(Build(Host)?|Compiler|(C|LD)FLAGS|MACHINE_MSB)\\b",
                     "name": "support.variable.build.qore"
                 },
                 {
-                    "match": "\\b(VersionString|VersionMajor|VersionMinor|VersionSub)\\b",
+                    "match": "\\bVersion(String|Major|Minor|Sub)\\b",
                     "name": "support.variable.version.qore"
                 },
                 {
-                    "match": "\\b(stdin|stdout|stderr|stdin_stream|stdout_stream|stderr_stream)\\b",
+                    "match": "\\bstd(in|out|err)(_stream)?\\b",
                     "name": "support.variable.stdio.qore"
                 },
                 {
-                    "match": "\\b(PathSep|DirSep)\\b",
+                    "match": "\\b(Path|Dir)Sep\\b",
                     "name": "support.variable.separators.qore"
                 }
             ]
@@ -116,7 +116,7 @@
                     "name": "constant.language.null.qore"
                 },
                 {
-                    "match": "\\b(NT_(BINARY|BOOLEAN|CALLREF|CLOSURE|DATE|FLOAT|INT|HASH|LIST|NOTHING|NULL|NUMBER|OBJECT|STRING))\\b",
+                    "match": "\\bNT_(BINARY|BOOLEAN|CALLREF|CLOSURE|DATE|FLOAT|INT|HASH|LIST|NOTHING|NULL|NUMBER|OBJECT|STRING)\\b",
                     "name": "constant.language.types.qore"
                 }
             ]
@@ -370,11 +370,11 @@
                     "name": "keyword.control.qore"
                 },
                 {
-                    "match": "\\b(try|catch|throw|rethrow)\\b",
+                    "match": "\\b(try|catch|(re)?throw)\\b",
                     "name": "keyword.control.exception.qore"
                 },
                 {
-                    "match": "\\b(on_exit|on_error|on_success)\\b",
+                    "match": "\\bon_(exit|error|success)\\b",
                     "name": "keyword.control.oncondition.qore"
                 },
                 {
@@ -382,7 +382,7 @@
                     "name": "keyword.control.special.qore"
                 },
                 {
-                    "match": "\\b(background|chomp|elements|exists|extract|foldl|foldr|instanceof|keys|map|pop|push|remove|select|splice|shift|trim|unshift)\\b",
+                    "match": "\\b(background|chomp|elements|exists|extract|fold(l|r)|instanceof|keys|map|pop|push|remove|select|splice|(un)?shift|trim)\\b",
                     "name": "keyword.operator.qore"
                 },
                 {
@@ -614,7 +614,7 @@
                     "name": "storage.modifier.class.qore"
                 },
                 {
-                    "match": "\\b(private:hierarchy|private:internal)\\b",
+                    "match": "\\bprivate:(hierarchy|internal)\\b",
                     "name": "storage.modifier.private.special.qore"
                 },
                 {
@@ -662,7 +662,7 @@
                     "name": "storage.type.primitive.qore"
                 },
                 {
-                    "match": "\\b(softbool|softdate|softfloat|softhash|softint|softlist|softnumber|softstring)\\b",
+                    "match": "\\bsoft(bool|date|float|hash|int|list|number|string)\\b",
                     "name": "storage.type.primitive.soft.qore"
                 },
                 {

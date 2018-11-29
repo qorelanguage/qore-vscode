@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.2
+
+* Optimized Qore syntax file
+
 ## 0.3.1
 
 * Fixed path and URI handling on MS Windows.
