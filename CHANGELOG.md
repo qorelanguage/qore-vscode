@@ -1,8 +1,12 @@
 # Changelog
 
+## 0.3.3
+
+* Fixed handling of errors happening during reading of workspace root.
+
 ## 0.3.2
 
-* Optimized Qore syntax file
+* Optimized Qore syntax file.
 
 ## 0.3.1
 
