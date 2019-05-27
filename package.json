@@ -2,14 +2,14 @@
     "name": "qore-vscode",
     "displayName": "Qore",
     "description": "Qore language support for VS Code",
-    "version": "0.3.3",
+    "version": "0.3.4",
     "publisher": "qoretechnologies",
     "author": {
         "name": "Qore Technologies",
         "email": "vscode@qoretechnologies.com"
     },
     "engines": {
-        "vscode": "^1.25.0"
+        "vscode": "^1.35.0"
     },
     "license": "SEE LICENSE IN LICENSE.txt",
     "homepage": "https://github.com/qorelanguage/qore-vscode",
@@ -24,7 +24,8 @@
         "Programming Languages",
         "Linters",
         "Other",
-        "Snippets"
+        "Snippets",
+        "Debuggers"
     ],
     "icon": "icon.png",
     "galleryBanner": {
@@ -39,7 +40,12 @@
         "languageserver"
     ],
     "activationEvents": [
-        "onLanguage:qore"
+        "onLanguage:qore",
+        "onDebug",
+        "onCommand:extension.qore-debug-vscode.getFilename",
+        "onCommand:extension.qore-debug-vscode.getConnection",
+        "onCommand:extension.qore-debug-vscode.getProgram",
+        "onCommand:extension.qore-debug-vscode.pickLoadedScript"
     ],
     "main": "out/extension",
     "contributes": {
@@ -123,6 +129,12 @@
                     "default": false,
                     "scope": "window",
                     "description": "Append to QLS log file instead of overwriting it on each restart."
+                },
+                "qore.debugAdapter": {
+                    "type": "string",
+                    "description": "Path to the Qore VDA adapter (inluding the script file name).",
+                    "default": null,
+                    "scope": "window"
                 }
             }
         },
@@ -132,24 +144,228 @@
                 "editor.insertSpaces": true,
                 "editor.quickSuggestions": true
             }
-        }
+        },
+        "views": {
+            "debug": [
+                {
+                    "id": "extension.qore-debug-vscode.programExplorer",
+                    "name": "%program.explorer.view.name%",
+                    "when": "inDebugMode && showProgramScriptsExplorer"
+                }
+            ]
+        },
+        "commands": [
+            {
+                "command": "extension.qore-debug-vscode.pickSourceCode",
+                "title": "%pick.source.code%",
+                "category": "Debug"
+            }
+        ],
+        "breakpoints": [
+            {
+                "language": "qore"
+            }
+        ],
+        "debuggers": [
+            {
+                "type": "qore",
+                "label": "Qore Debug",
+                "program": "qdbg-vsc-adapter",
+                "args": [
+                    "-vvv"
+                ],
+                "runtime": "qore",
+                "languages": [
+                    "qore"
+                ],
+                "variables": {
+                    "AskForFilename": "extension.qore-debug-vscode.getFilename",
+                    "AskForConnection": "extension.qore-debug-vscode.getConnection",
+                    "AskForProgram": "extension.qore-debug-vscode.getProgram"
+                },
+                "configurationSnippets": [
+                    {
+                        "label": "Qore Debug: Launch",
+                        "description": "A new configuration for launching a Qore debug program",
+                        "body": {
+                            "type": "qore",
+                            "request": "launch",
+                            "name": "${2:Launch Program}",
+                            "program": "^\"\\${workspaceFolder}/${1:Program}\""
+                        }
+                    },
+                    {
+                        "label": "Qore Debug: Attach",
+                        "description": "A new configuration for attaching a remote Qore debug server",
+                        "body": {
+                            "type": "qore",
+                            "request": "attach",
+                            "name": "${2:Attach debug server}",
+                            "connection": "ws://add_my_address/debug",
+                            "program": "my_program"
+                        }
+                    }
+                ],
+                "configurationAttributes": {
+                    "launch": {
+                        "required": [
+                            "program"
+                        ],
+                        "properties": {
+                            "program": {
+                                "type": "string",
+                                "description": "Absolute path to a text file.",
+                                "default": "${workspaceFolder}/${command:AskForFilename}"
+                            },
+                            "logFilename": {
+                                "type": "string",
+                                "description": "Logging filename"
+                            },
+                            "appendToLog": {
+                                "type": "boolean",
+                                "description": "Append to log file",
+                                "default": false
+                            },
+                            "fullException": {
+                                "type": "boolean",
+                                "description": "Provide full decription info",
+                                "default": false
+                            },
+                            "define": {
+                                "type": "array",
+                                "description": "set the define parse values",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "parseOptions": {
+                                "type": "array",
+                                "description": "Set parse options, e.g. no-database",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "timeZone": {
+                                "type": "string",
+                                "description": "set the time zone"
+                            },
+                            "verbosity": {
+                                "type": "integer",
+                                "description": "Verbosity level of Debug Adapter Protocol.",
+                                "default": 0
+                            },
+                            "stopOnEntry": {
+                                "type": "boolean",
+                                "description": "Automatically stop after launch.",
+                                "default": true
+                            }
+                        }
+                    },
+                    "attach": {
+                        "required": [
+                            "program",
+                            "connection"
+                        ],
+                        "properties": {
+                            "connection": {
+                                "type": "string",
+                                "description": "URL or connection name to connect remote debug server, e.g. ws://socket=<url_encoded_path>/path",
+                                "default": "${command:AskForConection}"
+                            },
+                            "headers": {
+                                "type": "array",
+                                "description": "HTTP headers for websocket connection request (each header is object containing 2 properties 'name' and 'value' as strings)",
+                                "items": {
+                                    "type": "object"
+                                }
+                            },
+                            "program": {
+                                "type": "string",
+                                "description": "Program name or id",
+                                "default": "${command:AskForProgram}"
+                            },
+                            "logFilename": {
+                                "type": "string",
+                                "description": "Logging filename"
+                            },
+                            "appendToLog": {
+                                "type": "boolean",
+                                "description": "Append to log file",
+                                "default": false
+                            },
+                            "fullException": {
+                                "type": "boolean",
+                                "description": "Provide full decription info",
+                                "default": false
+                            },
+                            "verbosity": {
+                                "type": "integer",
+                                "description": "Verbosity level of Debug Adapter Protocol.",
+                                "default": 0
+                            },
+                            "maxRedir": {
+                                "type": "integer",
+                                "description": "The maximum number of redirects before throwing an exception (the default is 5)"
+                            },
+                            "proxy": {
+                                "type": "string",
+                                "description": "The proxy URL for connecting through a proxy"
+                            },
+                            "timeout": {
+                                "type": "integer",
+                                "description": "The HTTP timeout in ms"
+                            },
+                            "connTimeout": {
+                                "type": "integer",
+                                "description": "The timeout for establishing a new socket connection"
+                            },
+                            "respTimeout": {
+                                "type": "integer",
+                                "description": "The timeout to wait for websocket response"
+                            }
+                        }
+                    }
+                },
+                "initialConfigurations": [
+                    {
+                        "type": "qore",
+                        "request": "launch",
+                        "name": "Ask for file name",
+                        "program": "${workspaceFolder}/${command:AskForFilename}"
+                    },
+                    {
+                        "type": "qore",
+                        "request": "attach",
+                        "name": "Ask for conection and program",
+                        "connection": "${command:AskForConnection}",
+                        "program": "${command:AskForProgram}"
+                    }
+                ]
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
         "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "npm run compile && node ./node_modules/vscode/bin/test"
+        "test": "npm run compile && node ./node_modules/vscode/bin/test",
+        "package": "vsce package",
+        "publish": "vsce publish"
     },
     "devDependencies": {
         "@types/mocha": "^2.2.43",
         "@types/node": "^7.0.71",
+        "mocha": "^5.2.0",
         "tslint": "^5.8.0",
         "typescript": "^2.6.1",
-        "vscode": "^1.1.22",
-        "vsce": "^1.52.0"
+        "vscode": "^1.1.31",
+        "vsce": "^1.52.0",
+        "vscode-debugadapter-testsupport": "^1.24.0"
     },
     "dependencies": {
-        "vscode-languageclient": "^5.1.1"
+        "vscode-languageclient": "^5.1.1",
+        "vscode-debugprotocol": "^1.24.0",
+        "vscode-debugadapter": "^1.24.0"
     }
 }

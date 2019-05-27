@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.4
+
+* Debugging support
+* Find Qore script in extension dir and environment PATH
+
 ## 0.3.3
 
 * Fixed handling of errors happening during reading of workspace root.
