@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.3.4
+## 0.4.0
 
 * Debugging support
 * Find Qore script in extension dir and environment PATH
