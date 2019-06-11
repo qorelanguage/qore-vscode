@@ -42,10 +42,10 @@
     "activationEvents": [
         "onLanguage:qore",
         "onDebug",
-        "onCommand:extension.qore-debug-vscode.getFilename",
-        "onCommand:extension.qore-debug-vscode.getConnection",
-        "onCommand:extension.qore-debug-vscode.getProgram",
-        "onCommand:extension.qore-debug-vscode.pickLoadedScript"
+        "onCommand:extension.qore-vscode.getFilename",
+        "onCommand:extension.qore-vscode.getConnection",
+        "onCommand:extension.qore-vscode.getProgram",
+        "onCommand:extension.qore-vscode.pickLoadedScript"
     ],
     "main": "out/extension",
     "contributes": {
@@ -148,7 +148,7 @@
         "views": {
             "debug": [
                 {
-                    "id": "extension.qore-debug-vscode.programExplorer",
+                    "id": "extension.qore-vscode.programExplorer",
                     "name": "%program.explorer.view.name%",
                     "when": "inDebugMode && showProgramScriptsExplorer"
                 }
@@ -156,7 +156,7 @@
         },
         "commands": [
             {
-                "command": "extension.qore-debug-vscode.pickSourceCode",
+                "command": "extension.qore-vscode.pickSourceCode",
                 "title": "%pick.source.code%",
                 "category": "Debug"
             }
@@ -179,9 +179,9 @@
                     "qore"
                 ],
                 "variables": {
-                    "AskForFilename": "extension.qore-debug-vscode.getFilename",
-                    "AskForConnection": "extension.qore-debug-vscode.getConnection",
-                    "AskForProgram": "extension.qore-debug-vscode.getProgram"
+                    "AskForFilename": "extension.qore-vscode.getFilename",
+                    "AskForConnection": "extension.qore-vscode.getConnection",
+                    "AskForProgram": "extension.qore-vscode.getProgram"
                 },
                 "configurationSnippets": [
                     {
