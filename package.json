@@ -44,8 +44,7 @@
         "onDebug",
         "onCommand:extension.qore-vscode.getFilename",
         "onCommand:extension.qore-vscode.getConnection",
-        "onCommand:extension.qore-vscode.getProgram",
-        "onCommand:extension.qore-vscode.pickLoadedScript"
+        "onCommand:extension.qore-vscode.getProgram"
     ],
     "main": "out/extension",
     "contributes": {
@@ -154,13 +153,7 @@
                 }
             ]
         },
-        "commands": [
-            {
-                "command": "extension.qore-vscode.pickSourceCode",
-                "title": "%pick.source.code%",
-                "category": "Debug"
-            }
-        ],
+        "commands": [],
         "breakpoints": [
             {
                 "language": "qore"
@@ -364,6 +357,7 @@
         "vscode-debugadapter-testsupport": "^1.24.0"
     },
     "dependencies": {
+        "ttag": "^1.4.0",
         "vscode-languageclient": "^5.1.1",
         "vscode-debugprotocol": "^1.24.0",
         "vscode-debugadapter": "^1.24.0"

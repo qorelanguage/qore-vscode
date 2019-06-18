@@ -5,10 +5,24 @@ import * as vscode from 'vscode';
 import * as languageclient from 'vscode-languageclient';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as msg from './qore_message';
+import { t } from 'ttag';
 import { WorkspaceFolder, DebugConfiguration, ProviderResult, CancellationToken } from 'vscode';
 
-var qoreExecutable: string;
-var debugAdapter: string;
+let qoreExecutable: string;
+let debugAdapter: string;
+/*
+    We need list of programs in GUI via registerCommand(extension.qore-vscode.getProgram)
+    but the connection is also resolvable in in registerCommand(extension.qore-vscode.getConnection).
+    getConnection is called first but does not updates config passed to getProgram. So as
+    workqround we pass value via global variable currentConnect which won't work if any
+    other resolvable variable appears in connection launch.json.
+
+    Resolving is executed via Debugger::substituesVariables() but I did not find way how to override default
+    handling in extension module. Seems we should create new Debuuger class and somehow register for 'qore'
+    but it is done in vscode core via contributes.debuggers in package.json.
+*/
+let currentConnection: string | undefined;
 
 function findQoreScript(context: vscode.ExtensionContext, scriptName: string): string {
     if (path.isAbsolute(scriptName)) {
@@ -32,14 +46,13 @@ function findQoreScript(context: vscode.ExtensionContext, scriptName: string): s
 
 // tutorial abouut "=>" https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
 export async function activate(context: vscode.ExtensionContext) {
-    console.log('Activating qore-vscode extension');
     // "Converting circular structure to JSON" when using JSON.stringify()
     // util.inspect() is proposed fix but it has another issue so limit depth
-    var util = require('util');
-    console.log("QoreConfigurationProvider(context: "+ util.inspect(context, {depth: 1}));
+    //let util = require('util');
+    //console.log("QoreConfigurationProvider(context: "+ util.inspect(context, {depth: 1}));
 
     qoreExecutable = vscode.workspace.getConfiguration("qore").get("executable") || "qore";
-    console.log('Qore executable: '+qoreExecutable);
+    console.log(t`Qore executable: ${qoreExecutable}`);
 
     // Find out if Qore and the astparser module are present.
     let results = child_process.spawnSync(qoreExecutable, ["-l astparser -l json -ne \"int x = 1; x++;\""], {shell: true});
@@ -110,15 +123,15 @@ export async function activate(context: vscode.ExtensionContext) {
         // Create the language client and start the client.
         if (qlsOk) {
             disposable = lc.start();
-            console.log('Started QLS');
+            console.log(t`Started QLS`);
 
             // Push the disposable to the context's subscriptions so that the
             // client can be deactivated on extension deactivation
             context.subscriptions.push(disposable);
         }
         else {
-            console.log("Qore and/or astparser module are not present -> won't run QLS");
-            vscode.window.showWarningMessage("Qore or Qore's astparser module are not present. Qore language server will not be started.");
+            console.log(t`Qore and/or astparser module are not present -> won't run QLS`);
+            vscode.window.showWarningMessage(t`Qore or Qore's astparser module are not present. Qore language server will not be started.`);
             open_in_browser("https://github.com/qorelanguage/qore-vscode/wiki/Visual-Code-for-Qore-Language-Setup");
         }
     }
@@ -127,58 +140,76 @@ export async function activate(context: vscode.ExtensionContext) {
     debugAdapter = findQoreScript(context, vscode.workspace.getConfiguration("qore").get("debugAdapter") || "qdbg-vsc-adapter");
     results = child_process.spawnSync(qoreExecutable, [debugAdapter, "-h"], {shell: true});
     if (results.status != 1) {
-        console.log("Adapter [" + debugAdapter + "] not found, Debugging support is disabled");
+        msg.error(t`Adapter '${debugAdapter}' not found, Debugging support is disabled`);
         return;
     }
 
     // activate debugger stuff
-    context.subscriptions.push(vscode.commands.registerCommand('extension.qore-vscode.getFilename', config => {
-        console.log("extension.qore-vscode.getFilename(config:"+JSON.stringify(config)+")");
+    context.subscriptions.push(vscode.commands.registerCommand('extension.qore-vscode.getFilename', _config => {
         // show input box is invoded async in executeCommandVariables so result of command is a Thenable object
         return vscode.window.showInputBox({
             //prompt: "",
-            placeHolder: "Please enter the name of a Qore file in the workspace folder",
+            placeHolder: t`Please enter the name of a Qore file in the workspace folder`,
             value: "script.q"
         });
     }));
-    context.subscriptions.push(vscode.commands.registerCommand('extension.qore-vscode.getConnection', config => {
-        console.log("extension.qore-vscode.getConnection(config:"+JSON.stringify(config)+")");
+    context.subscriptions.push(vscode.commands.registerCommand('extension.qore-vscode.getConnection', _config => {
         return vscode.window.showInputBox({
-            placeHolder: "Please enter the connection name to Qore debug server",
+            placeHolder: t`Please enter the connection name to Qore debug server`,
             value: "ws://localhost:8001/debug"
+        }).then(conn => {
+            // save value for getProgramFromList
+            currentConnection = conn;
+            return conn;
         });
     }));
+
     context.subscriptions.push(vscode.commands.registerCommand('extension.qore-vscode.getProgram', config => {
-        console.log("extension.qore-vscode.getProgram(config:"+JSON.stringify(config)+")");
-        return vscode.window.showInputBox({
-            placeHolder: "Please enter the name of a Qore program or program id",
-            value: "my-job"
+        config.connection = currentConnection;  // resolve potential variable
+        let pgms = execDebugAdapterCommand(config, 'pgmlist');
+        let items: string[] = [];
+        for (let key in pgms) {
+            if (pgms[key].debugging) {
+                items.push(pgms[key].scriptName);
+            }
+        }
+        return vscode.window.showQuickPick(items, {
+            canPickMany: false,
+            placeHolder: t`Please enter the name of a Qore program or program id`,
         });
     }));
 
     // register a configuration provider for 'qore' debug type
     context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('qore', new QoreConfigurationProvider()));
 
-    const factory = new QoreDebugAdapterDescriptorFactory();
-    context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('qore', factory));
+    context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('qore', new QoreDebugAdapterDescriptorFactory()));
 
-    context.subscriptions.push(vscode.debug.onDidStartDebugSession(session => {
-        console.log("extension.qore-vscode.onDidStartDebugSession(session:"+JSON.stringify(session)+")");
+    context.subscriptions.push(vscode.debug.onDidStartDebugSession(_session => {
     }));
-    context.subscriptions.push(vscode.debug.onDidTerminateDebugSession(session => {
-        console.log("extension.qore-vscode.onDidTerminateDebugSession(session:"+JSON.stringify(session)+")");
+    context.subscriptions.push(vscode.debug.onDidTerminateDebugSession(_session => {
     }));
-    context.subscriptions.push(vscode.debug.onDidChangeActiveDebugSession(session => {
-        console.log("extension.qore-vscode.onDidChangeActiveDebugSession(session:" + JSON.stringify(session) + ")");
+    context.subscriptions.push(vscode.debug.onDidChangeActiveDebugSession(_session => {
     }));
-    context.subscriptions.push(vscode.debug.onDidReceiveDebugSessionCustomEvent(event => {
-        console.log("extension.qore-vscode.onDidReceiveDebugSessionCustomEvent(event:" + JSON.stringify(event) + ")");
+    context.subscriptions.push(vscode.debug.onDidReceiveDebugSessionCustomEvent(_event => {
     }));
+
+    // export public API-interface
+    let api = {
+        execDebugAdapterCommand(configuration: DebugConfiguration, command: string): any {
+            return execDebugAdapterCommand(configuration, command);
+        },
+        getQoreExecutable(): string {
+            return qoreExecutable;
+        },
+        getExecutableArguments(configuration: DebugConfiguration): string[] {
+            return getExecutableArguments(configuration);
+        }
+    }
+    return api;
 }
 
 // this method is called when your extension is deactivated
 export function deactivate() {
-    console.log("extension.qore-vscode.deactivate");
 }
 
 function open_in_browser(url: string) {
@@ -218,8 +249,7 @@ class QoreConfigurationProvider implements vscode.DebugConfigurationProvider {
         e.g. add all missing attributes to the debug configuration.
         Commands ${command:xxx} are invoked by vscode and value is substituted
      */
-    resolveDebugConfiguration(folder: WorkspaceFolder | undefined, config: DebugConfiguration, token?: CancellationToken): ProviderResult<DebugConfiguration> {
-        console.log("resolveDebugConfiguration(folder: "+JSON.stringify(folder)+", config:"+JSON.stringify(config)+", token:"+JSON.stringify(token)+")");
+    resolveDebugConfiguration(_folder: WorkspaceFolder | undefined, config: DebugConfiguration, _token?: CancellationToken): ProviderResult<DebugConfiguration> {
         // if launch.json is missing or empty
         if (!config.type && !config.request && !config.name) {
             const editor = vscode.window.activeTextEditor;
@@ -231,22 +261,22 @@ class QoreConfigurationProvider implements vscode.DebugConfigurationProvider {
                 config.stopOnEntry = true;  // TODO: not yet supported
             }
         }
-        console.log("config:"+JSON.stringify(config));
+        currentConnection = config.connection;
         return config;
     }
 }
 
 function getExecutableArguments(configuration: DebugConfiguration): string[] {
 
-    var args: string[] = [debugAdapter];
+    let args: string[] = [debugAdapter];
     if (configuration.request === 'attach') {
         if (!configuration.connection) {
-            throw new Error("Connection string not specified");
+            throw new Error(t`Connection string not specified`);
         }
         args.push("--attach");
         args.push(configuration.connection);
         if (!configuration.program) {
-            throw new Error("Program name or id is not specified");
+            throw new Error(t`Program name or id is not specified`);
         }
         if (configuration.proxy) {
             args.push("--proxy");
@@ -269,9 +299,10 @@ function getExecutableArguments(configuration: DebugConfiguration): string[] {
             args.push(configuration.respTimeout);
         }
         if (typeof configuration.headers !== "undefined") {
-            for (var _hdr of configuration.headers) {
+            for (let _hdr of configuration.headers) {
                 if (typeof _hdr.name !== "string" || typeof _hdr.value !== "string") {
-                    throw new Error("Wrong name or value for a header in: "+JSON.stringify(_hdr));
+                    let hdrs: string = JSON.stringify(_hdr);
+                    throw new Error(t`"Wrong name or value for a header in: ${hdrs}`);
                 }
                 args.push("--header");
                 args.push(_hdr.name + "=" + _hdr.value);
@@ -279,7 +310,7 @@ function getExecutableArguments(configuration: DebugConfiguration): string[] {
         }
     } else {
         if (!configuration.program) {
-            throw new Error("Cannot find a program to debug");
+            throw new Error(t`Cannot find a program to debug`);
         }
         if (configuration.define) {
             for (let _s in configuration.define) {
@@ -319,7 +350,6 @@ function getExecutableArguments(configuration: DebugConfiguration): string[] {
 class QoreDebugAdapterDescriptorFactory implements vscode.DebugAdapterDescriptorFactory {
 
     createDebugAdapterDescriptor(session: vscode.DebugSession, _executable: vscode.DebugAdapterExecutable | undefined): vscode.ProviderResult<vscode.DebugAdapterDescriptor> {
-        console.log("createDebugAdapterDescriptor(session: "+JSON.stringify(session)+")");
         return new vscode.DebugAdapterExecutable(qoreExecutable, getExecutableArguments(session.configuration));
     }
 }
@@ -329,12 +359,12 @@ class QoreDebugAdapterDescriptorFactory implements vscode.DebugAdapterDescriptor
  */
 export function execDebugAdapterCommand(configuration: DebugConfiguration, command: string): any {
     if (!debugAdapter) {
-        throw new Error("Debugging support is disabled");
+        throw new Error(t`Debugging support is disabled`);
     }
     if (!command) {
-        throw new Error("Command is not specified");
+        throw new Error(t`Command is not specified`);
     }
-    var args: string[] = getExecutableArguments(configuration);
+    let args: string[] = getExecutableArguments(configuration);
     args.push("-X");
     args.push(command);
     let results = child_process.spawnSync(qoreExecutable, args, {shell: true});
@@ -342,5 +372,4 @@ export function execDebugAdapterCommand(configuration: DebugConfiguration, comma
         throw new Error(results.stderr.toString());
     }
     return JSON.parse(results.stdout.toString()).result;
-
 }
