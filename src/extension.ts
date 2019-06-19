@@ -6,8 +6,57 @@ import * as languageclient from 'vscode-languageclient';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as msg from './qore_message';
-import { t } from 'ttag';
+import { t, addLocale, useLocale } from 'ttag';
+import * as gettext_parser from 'gettext-parser';
 import { WorkspaceFolder, DebugConfiguration, ProviderResult, CancellationToken } from 'vscode';
+
+setLocale();
+
+function setLocale() {
+    const default_locale = 'en';
+    let use_default_locale: boolean = false;
+
+    let po_file: string | undefined = undefined;
+    let locale: string = vscode.workspace.getConfiguration().typescript.locale;
+
+    function setPoFile() {
+        if (use_default_locale) {
+            locale = default_locale;
+        }
+        po_file = path.join(__dirname, '..', 'lang', `${locale}.po`);
+        if (!fs.existsSync(po_file)) {
+            po_file = undefined;
+        }
+    }
+
+    if (locale) {
+        setPoFile();
+        if (!po_file && (locale != default_locale)) {
+            use_default_locale = true;
+            setPoFile();
+        }
+    }
+    else {
+        use_default_locale = true;
+        setPoFile();
+    }
+
+    if (!po_file) {
+        msg.error("Language file not found");
+        return;
+    }
+
+    const translation_object = gettext_parser.po.parse(fs.readFileSync(po_file));
+    addLocale(locale, translation_object);
+    useLocale(locale);
+
+    if (use_default_locale) {
+        msg.log(t`UsingDefaultLocale ${locale}`);
+    }
+    else {
+        msg.log(t`UsingLocaleSettings ${locale}`);
+    }
+}
 
 let qoreExecutable: string;
 let debugAdapter: string;
@@ -52,7 +101,7 @@ export async function activate(context: vscode.ExtensionContext) {
     //console.log("QoreConfigurationProvider(context: "+ util.inspect(context, {depth: 1}));
 
     qoreExecutable = vscode.workspace.getConfiguration("qore").get("executable") || "qore";
-    console.log(t`Qore executable: ${qoreExecutable}`);
+    console.log(t`QoreExecutable ${qoreExecutable}`);
 
     // Find out if Qore and the astparser module are present.
     let results = child_process.spawnSync(qoreExecutable, ["-l astparser -l json -ne \"int x = 1; x++;\""], {shell: true});
@@ -123,15 +172,15 @@ export async function activate(context: vscode.ExtensionContext) {
         // Create the language client and start the client.
         if (qlsOk) {
             disposable = lc.start();
-            console.log(t`Started QLS`);
+            console.log(t`StartedQLS`);
 
             // Push the disposable to the context's subscriptions so that the
             // client can be deactivated on extension deactivation
             context.subscriptions.push(disposable);
         }
         else {
-            console.log(t`Qore and/or astparser module are not present -> won't run QLS`);
-            vscode.window.showWarningMessage(t`Qore or Qore's astparser module are not present. Qore language server will not be started.`);
+            console.log(t`AstParserNotFound`);
+            vscode.window.showWarningMessage(t`AstParserNotFound`);
             open_in_browser("https://github.com/qorelanguage/qore-vscode/wiki/Visual-Code-for-Qore-Language-Setup");
         }
     }
@@ -140,7 +189,7 @@ export async function activate(context: vscode.ExtensionContext) {
     debugAdapter = findQoreScript(context, vscode.workspace.getConfiguration("qore").get("debugAdapter") || "qdbg-vsc-adapter");
     results = child_process.spawnSync(qoreExecutable, [debugAdapter, "-h"], {shell: true});
     if (results.status != 1) {
-        msg.error(t`Adapter '${debugAdapter}' not found, Debugging support is disabled`);
+        msg.error(t`DebugAdapterNotFound '${debugAdapter}'`);
         return;
     }
 
@@ -149,13 +198,13 @@ export async function activate(context: vscode.ExtensionContext) {
         // show input box is invoded async in executeCommandVariables so result of command is a Thenable object
         return vscode.window.showInputBox({
             //prompt: "",
-            placeHolder: t`Please enter the name of a Qore file in the workspace folder`,
+            placeHolder: t`FilenamePlaceHolder`,
             value: "script.q"
         });
     }));
     context.subscriptions.push(vscode.commands.registerCommand('extension.qore-vscode.getConnection', _config => {
         return vscode.window.showInputBox({
-            placeHolder: t`Please enter the connection name to Qore debug server`,
+            placeHolder: t`ConnectionPlaceHolder`,
             value: "ws://localhost:8001/debug"
         }).then(conn => {
             // save value for getProgramFromList
@@ -175,7 +224,7 @@ export async function activate(context: vscode.ExtensionContext) {
         }
         return vscode.window.showQuickPick(items, {
             canPickMany: false,
-            placeHolder: t`Please enter the name of a Qore program or program id`,
+            placeHolder: t`ProgramPlaceHolder`,
         });
     }));
 
@@ -271,12 +320,12 @@ function getExecutableArguments(configuration: DebugConfiguration): string[] {
     let args: string[] = [debugAdapter];
     if (configuration.request === 'attach') {
         if (!configuration.connection) {
-            throw new Error(t`Connection string not specified`);
+            throw new Error(t`ConnectionNotSpecified`);
         }
         args.push("--attach");
         args.push(configuration.connection);
         if (!configuration.program) {
-            throw new Error(t`Program name or id is not specified`);
+            throw new Error(t`ProgramNotSpecified`);
         }
         if (configuration.proxy) {
             args.push("--proxy");
@@ -302,7 +351,7 @@ function getExecutableArguments(configuration: DebugConfiguration): string[] {
             for (let _hdr of configuration.headers) {
                 if (typeof _hdr.name !== "string" || typeof _hdr.value !== "string") {
                     let hdrs: string = JSON.stringify(_hdr);
-                    throw new Error(t`"Wrong name or value for a header in: ${hdrs}`);
+                    throw new Error(t`"WrongHeader ${hdrs}`);
                 }
                 args.push("--header");
                 args.push(_hdr.name + "=" + _hdr.value);
@@ -310,7 +359,7 @@ function getExecutableArguments(configuration: DebugConfiguration): string[] {
         }
     } else {
         if (!configuration.program) {
-            throw new Error(t`Cannot find a program to debug`);
+            throw new Error(t`ProgramFileNotSpecified`);
         }
         if (configuration.define) {
             for (let _s in configuration.define) {
@@ -350,7 +399,17 @@ function getExecutableArguments(configuration: DebugConfiguration): string[] {
 class QoreDebugAdapterDescriptorFactory implements vscode.DebugAdapterDescriptorFactory {
 
     createDebugAdapterDescriptor(session: vscode.DebugSession, _executable: vscode.DebugAdapterExecutable | undefined): vscode.ProviderResult<vscode.DebugAdapterDescriptor> {
-        return new vscode.DebugAdapterExecutable(qoreExecutable, getExecutableArguments(session.configuration));
+        let s: string;
+        if (session.configuration.request == "attach") {
+            s = t`Connecting ${session.configuration.connection} ${session.configuration.program}`;
+        } else {
+            s = t`Launching ${session.configuration.program}`;
+        }
+        msg.info(s);
+        console.log(s);
+        let args: string[] = getExecutableArguments(session.configuration);
+        console.log(qoreExecutable + " " + args.join(" "));
+        return new vscode.DebugAdapterExecutable(qoreExecutable, args);
     }
 }
 
@@ -359,10 +418,10 @@ class QoreDebugAdapterDescriptorFactory implements vscode.DebugAdapterDescriptor
  */
 export function execDebugAdapterCommand(configuration: DebugConfiguration, command: string): any {
     if (!debugAdapter) {
-        throw new Error(t`Debugging support is disabled`);
+        throw new Error(t`DebuggingIsDisabled`);
     }
     if (!command) {
-        throw new Error(t`Command is not specified`);
+        throw new Error(t`CommandNotSpecified`);
     }
     let args: string[] = getExecutableArguments(configuration);
     args.push("-X");

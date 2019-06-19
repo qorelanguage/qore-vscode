@@ -1,0 +1,59 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=utf-8\n"
+"Plural-Forms: nplurals = 2; plural = (n !== 1);\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+
+msgid "UsingLocaleSettings ${ locale }"
+msgstr "Using locale settings '${ locale }'"
+
+msgid "UsingDefaultLocale ${ locale }"
+msgstr "Using default locale '${ locale }'"
+
+msgid "QoreExecutable ${ executable }"
+msgstr "Qore executable: ${ executable }"
+
+msgid "StartedQLS"
+msgstr "Started QLS"
+
+msgid "AstParserNotFound"
+msgstr "Qore and/or astparser module are not present. Qore language server will not be started."
+
+msgid "DebugAdapterNotFound {$ debugAdapter }
+msgstr "Adapter '${ debugAdapter }' not found, Debugging support is disabled"
+
+msgid "FilenamePlaceHolder"
+msgstr "Please enter the name of a Qore file in the workspace folder"
+
+msgid "ConnectionPlaceHolder"
+msgstr "Please enter the connection name to Qore debug server"
+
+msgid "ProgramPlaceholeder"
+msgstr "Please enter the name of a Qore program or program id"
+
+msgid "ConnectionNotSpecified"
+msgstr "Connection string not specified"
+
+msgid "ProgramNotSpecified"
+msgstr "Program name or id is not specified"
+
+msgid "WrongHeader ${ hdrs }"
+msgstr "Wrong name or value for a header in: ${ hdrs }"
+
+msgid "ProgramFileNotSpecified"
+msgstr "Cannot find a program to debug"
+
+msgid "CommandNotSpecified"
+msgstr "Command is not specified"
+
+msgid "DebuggingIsDisabled"
+msgstr "Debugging support is disabled"
+
+msgid "Connecting ${ connection } ${ program }"
+msgid "Connecting: ${ connection } ${ program }"
+
+msgid "Launching ${ program }"
+msgid "Launching: ${ program }"
