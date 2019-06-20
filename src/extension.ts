@@ -62,9 +62,9 @@ let qoreExecutable: string;
 let debugAdapter: string;
 /*
     We need list of programs in GUI via registerCommand(extension.qore-vscode.getProgram)
-    but the connection is also resolvable in in registerCommand(extension.qore-vscode.getConnection).
-    getConnection is called first but does not updates config passed to getProgram. So as
-    workqround we pass value via global variable currentConnect which won't work if any
+    but the connection is also resolvable in registerCommand(extension.qore-vscode.getConnection).
+    getConnection is called first but does not update config passed to getProgram. So as
+    workaround we pass value via global variable currentConnection which won't work if any
     other resolvable variable appears in connection launch.json.
 
     Resolving is executed via Debugger::substituesVariables() but I did not find way how to override default
@@ -296,7 +296,7 @@ class QoreConfigurationProvider implements vscode.DebugConfigurationProvider {
     /**
         Massage a debug configuration just before a debug session is being launched,
         e.g. add all missing attributes to the debug configuration.
-        Commands ${command:xxx} are invoked by vscode and value is substituted
+        Commands ${command:xxx} are invoked by vscode substituteVariables() and value is substituted
      */
     resolveDebugConfiguration(_folder: WorkspaceFolder | undefined, config: DebugConfiguration, _token?: CancellationToken): ProviderResult<DebugConfiguration> {
         // if launch.json is missing or empty
@@ -351,7 +351,7 @@ function getExecutableArguments(configuration: DebugConfiguration): string[] {
             for (let _hdr of configuration.headers) {
                 if (typeof _hdr.name !== "string" || typeof _hdr.value !== "string") {
                     let hdrs: string = JSON.stringify(_hdr);
-                    throw new Error(t`"WrongHeader ${hdrs}`);
+                    throw new Error(t`WrongHeader ${hdrs}`);
                 }
                 args.push("--header");
                 args.push(_hdr.name + "=" + _hdr.value);
