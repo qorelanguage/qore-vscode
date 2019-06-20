@@ -22,7 +22,7 @@ msgstr "Started QLS"
 msgid "AstParserNotFound"
 msgstr "Qore and/or astparser module are not present. Qore language server will not be started."
 
-msgid "DebugAdapterNotFound {$ debugAdapter }
+msgid "DebugAdapterNotFound ${ debugAdapter }"
 msgstr "Adapter '${ debugAdapter }' not found, Debugging support is disabled"
 
 msgid "FilenamePlaceHolder"
@@ -53,7 +53,16 @@ msgid "DebuggingIsDisabled"
 msgstr "Debugging support is disabled"
 
 msgid "Connecting ${ connection } ${ program }"
-msgid "Connecting: ${ connection } ${ program }"
+msgstr "Connecting: ${ connection } ${ program }"
 
 msgid "Launching ${ program }"
-msgid "Launching: ${ program }"
+msgstr "Launching: ${ program }"
+
+msgid "SessionStarted ${ program }"
+msgstr "Session started: ${ program }"
+
+msgid "SessionTerminated ${ program }"
+msgstr "Session terminated: ${ program }"
+
+msgid "SessionChanged ${ program }"
+msgstr "Session changed: ${ program }"

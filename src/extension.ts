@@ -15,6 +15,7 @@ setLocale();
 function setLocale() {
     const default_locale = 'en';
     let use_default_locale: boolean = false;
+console.log(`SetLocale()`);
 
     let po_file: string | undefined = undefined;
     let locale: string = vscode.workspace.getConfiguration().typescript.locale;
@@ -233,11 +234,20 @@ export async function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('qore', new QoreDebugAdapterDescriptorFactory()));
 
-    context.subscriptions.push(vscode.debug.onDidStartDebugSession(_session => {
+    context.subscriptions.push(vscode.debug.onDidStartDebugSession(session => {
+        if (session.type == "qore") {
+            msg.info(t`SessionStarted ${session.configuration.program}`);
+        }
     }));
-    context.subscriptions.push(vscode.debug.onDidTerminateDebugSession(_session => {
+    context.subscriptions.push(vscode.debug.onDidTerminateDebugSession(session => {
+        if (session.type == "qore") {
+            msg.info(t`SessionTerminated ${session.configuration.program}`);
+        }
     }));
-    context.subscriptions.push(vscode.debug.onDidChangeActiveDebugSession(_session => {
+    context.subscriptions.push(vscode.debug.onDidChangeActiveDebugSession(session => {
+        if (session !== undefined && session.type == "qore") {
+            // msg.info(t`SessionChanged ${session.configuration.program}`);
+        }
     }));
     context.subscriptions.push(vscode.debug.onDidReceiveDebugSessionCustomEvent(_event => {
     }));
