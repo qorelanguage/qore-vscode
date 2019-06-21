@@ -15,7 +15,6 @@ setLocale();
 function setLocale() {
     const default_locale = 'en';
     let use_default_locale: boolean = false;
-console.log(`SetLocale()`);
 
     let po_file: string | undefined = undefined;
     let locale: string = vscode.workspace.getConfiguration().typescript.locale;
@@ -180,8 +179,7 @@ export async function activate(context: vscode.ExtensionContext) {
             context.subscriptions.push(disposable);
         }
         else {
-            console.log(t`AstParserNotFound`);
-            vscode.window.showWarningMessage(t`AstParserNotFound`);
+            msg.warning(t`AstParserNotFound`);
             open_in_browser("https://github.com/qorelanguage/qore-vscode/wiki/Visual-Code-for-Qore-Language-Setup");
         }
     }
@@ -416,7 +414,6 @@ class QoreDebugAdapterDescriptorFactory implements vscode.DebugAdapterDescriptor
             s = t`Launching ${session.configuration.program}`;
         }
         msg.info(s);
-        console.log(s);
         let args: string[] = getExecutableArguments(session.configuration);
         console.log(qoreExecutable + " " + args.join(" "));
         return new vscode.DebugAdapterExecutable(qoreExecutable, args);
