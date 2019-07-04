@@ -10,6 +10,8 @@ import { t, addLocale, useLocale } from 'ttag';
 import * as gettext_parser from 'gettext-parser';
 import { WorkspaceFolder, DebugConfiguration, ProviderResult, CancellationToken } from 'vscode';
 
+let languageClient: languageclient.LanguageClient;
+
 setLocale();
 
 function setLocale() {
@@ -165,13 +167,13 @@ export async function activate(context: vscode.ExtensionContext) {
         }
     };
 
-    let lc = new languageclient.LanguageClient('qls', 'Qore Language Server', serverOptions, clientOptions);
+    languageClient = new languageclient.LanguageClient('qls', 'Qore Language Server', serverOptions, clientOptions);
     let disposable;
 
     if (useQLS) {
         // Create the language client and start the client.
         if (qlsOk) {
-            disposable = lc.start();
+            disposable = languageClient.start();
             console.log(t`StartedQLS`);
 
             // Push the disposable to the context's subscriptions so that the
@@ -260,9 +262,36 @@ export async function activate(context: vscode.ExtensionContext) {
         },
         getExecutableArguments(configuration: DebugConfiguration): string[] {
             return getExecutableArguments(configuration);
+        },
+        async getDocumentSymbols(document: vscode.TextDocument): Promise<any> {
+            return await getDocumentSymbolsIntern(document);
         }
-    }
+    };
+
     return api;
+}
+
+async function getDocumentSymbolsIntern(document: vscode.TextDocument): Promise<any> {
+    const params = {
+        textDocument: {
+            uri: 'file:' + document.uri.path,
+            text: document.getText(),
+            languageId: document.languageId,
+            version: document.version
+        }
+    };
+
+    languageClient.sendRequest('textDocument/didOpen', params).then(
+        (data: any) => {
+            console.debug(data);
+        },
+        (error: any) => {
+            console.log(error);
+            return Promise.resolve(null);
+        }
+    );
+
+    return languageClient.sendRequest('textDocument/documentSymbol', params);
 }
 
 // this method is called when your extension is deactivated
