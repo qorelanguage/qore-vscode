@@ -11,6 +11,7 @@ import * as gettext_parser from 'gettext-parser';
 import { WorkspaceFolder, DebugConfiguration, ProviderResult, CancellationToken } from 'vscode';
 
 let languageClient: languageclient.LanguageClient;
+let languageClientReady: boolean = false;
 
 setLocale();
 
@@ -168,6 +169,9 @@ export async function activate(context: vscode.ExtensionContext) {
     };
 
     languageClient = new languageclient.LanguageClient('qls', 'Qore Language Server', serverOptions, clientOptions);
+    languageClient.onReady().then(
+        () => languageClientReady = true
+    );
     let disposable;
 
     if (useQLS) {
@@ -263,7 +267,11 @@ export async function activate(context: vscode.ExtensionContext) {
         getExecutableArguments(configuration: DebugConfiguration): string[] {
             return getExecutableArguments(configuration);
         },
-        getDocumentSymbols(document: vscode.TextDocument): Promise<any> {
+        async getDocumentSymbols(document: vscode.TextDocument): Promise<any> {
+            let n = 100;
+            while (!languageClientReady && --n) {
+                await new Promise(resolve => setTimeout(resolve, 200));
+            }
             return getDocumentSymbolsIntern(document);
         }
     };
@@ -281,8 +289,13 @@ function getDocumentSymbolsIntern(document: vscode.TextDocument): any {
         }
     };
 
-    languageClient.sendRequest('textDocument/didOpen', params);
-    return languageClient.sendRequest('textDocument/documentSymbol', params);
+    try {
+        languageClient.sendRequest('textDocument/didOpen', params);
+        return languageClient.sendRequest('textDocument/documentSymbol', params);
+    }
+    catch (e){
+        return Promise.resolve(null);
+    }
 }
 
 // this method is called when your extension is deactivated
