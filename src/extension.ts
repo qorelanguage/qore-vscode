@@ -253,7 +253,7 @@ export async function activate(context: vscode.ExtensionContext) {
     }));
 
     // export public API-interface
-    let api = {
+    const api = {
         execDebugAdapterCommand(configuration: DebugConfiguration, command: string): any {
             return execDebugAdapterCommand(configuration, command);
         },
@@ -263,15 +263,15 @@ export async function activate(context: vscode.ExtensionContext) {
         getExecutableArguments(configuration: DebugConfiguration): string[] {
             return getExecutableArguments(configuration);
         },
-        async getDocumentSymbols(document: vscode.TextDocument): Promise<any> {
-            return await getDocumentSymbolsIntern(document);
+        getDocumentSymbols(document: vscode.TextDocument): Promise<any> {
+            return getDocumentSymbolsIntern(document);
         }
     };
 
     return api;
 }
 
-async function getDocumentSymbolsIntern(document: vscode.TextDocument): Promise<any> {
+function getDocumentSymbolsIntern(document: vscode.TextDocument): any {
     const params = {
         textDocument: {
             uri: 'file:' + document.uri.path,
@@ -281,16 +281,7 @@ async function getDocumentSymbolsIntern(document: vscode.TextDocument): Promise<
         }
     };
 
-    languageClient.sendRequest('textDocument/didOpen', params).then(
-        (data: any) => {
-            console.debug(data);
-        },
-        (error: any) => {
-            console.log(error);
-            return Promise.resolve(null);
-        }
-    );
-
+    languageClient.sendRequest('textDocument/didOpen', params);
     return languageClient.sendRequest('textDocument/documentSymbol', params);
 }
 
@@ -319,7 +310,7 @@ function open_in_browser(url: string) {
         default:
             executable = '';
     }
-    let command: string = executable + ' ' + url;
+    const command: string = executable + ' ' + url;
     try {
         child_process.execSync(command);
     }
