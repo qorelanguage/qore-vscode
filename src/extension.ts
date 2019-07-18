@@ -267,26 +267,27 @@ export async function activate(context: vscode.ExtensionContext) {
         getExecutableArguments(configuration: DebugConfiguration): string[] {
             return getExecutableArguments(configuration);
         },
-        async getDocumentSymbols(document: vscode.TextDocument): Promise<any> {
+        async getDocumentSymbols(document: vscode.TextDocument, ret_type?: string): Promise<any> {
             let n = 100;
             while (!languageClientReady && --n) {
                 await new Promise(resolve => setTimeout(resolve, 200));
             }
-            return getDocumentSymbolsIntern(document);
+            return getDocumentSymbolsIntern(document, ret_type);
         }
     };
 
     return api;
 }
 
-function getDocumentSymbolsIntern(document: vscode.TextDocument): any {
+function getDocumentSymbolsIntern(document: vscode.TextDocument, ret_type?: string): any {
     const params = {
         textDocument: {
             uri: 'file:' + document.uri.path,
             text: document.getText(),
             languageId: document.languageId,
             version: document.version
-        }
+        },
+        ... ret_type ? { ret_type } : {}
     };
 
     try {
