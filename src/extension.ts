@@ -1,5 +1,3 @@
-'use strict';
-
 import * as child_process from 'child_process';
 import * as vscode from 'vscode';
 import * as languageclient from 'vscode-languageclient';
@@ -9,6 +7,13 @@ import * as msg from './qore_message';
 import { t, addLocale, useLocale } from 'ttag';
 import * as gettext_parser from 'gettext-parser';
 import { WorkspaceFolder, DebugConfiguration, ProviderResult, CancellationToken } from 'vscode';
+
+export interface QoreTextDocument {
+    uri: string,
+    text: string,
+    languageId: string,
+    version: number
+};
 
 let languageClient: languageclient.LanguageClient;
 let languageClientReady: boolean = false;
@@ -267,26 +272,21 @@ export async function activate(context: vscode.ExtensionContext) {
         getExecutableArguments(configuration: DebugConfiguration): string[] {
             return getExecutableArguments(configuration);
         },
-        async getDocumentSymbols(document: vscode.TextDocument, ret_type?: string): Promise<any> {
+        async getDocumentSymbols(doc: QoreTextDocument, ret_type?: string): Promise<any> {
             let n = 100;
             while (!languageClientReady && --n) {
                 await new Promise(resolve => setTimeout(resolve, 200));
             }
-            return getDocumentSymbolsIntern(document, ret_type);
+            return getDocumentSymbolsIntern(doc, ret_type);
         }
     };
 
     return api;
 }
 
-function getDocumentSymbolsIntern(document: vscode.TextDocument, ret_type?: string): any {
+function getDocumentSymbolsIntern(doc: QoreTextDocument, ret_type?: string): any {
     const params = {
-        textDocument: {
-            uri: 'file:' + document.uri.path,
-            text: document.getText(),
-            languageId: document.languageId,
-            version: document.version
-        },
+        textDocument: doc,
         ... ret_type ? { ret_type } : {}
     };
 
