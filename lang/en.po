@@ -19,8 +19,14 @@ msgstr "Qore executable: ${ executable }"
 msgid "StartedQLS"
 msgstr "Started QLS"
 
-msgid "AstParserNotFound"
-msgstr "Qore and/or astparser module are not present. Qore language server will not be started."
+msgid "QoreNotOkInstallVscodePkg"
+msgstr "Qore is necessary for the Qore and Qorus extensions to work correctly. Do you want to automatically download and install Qore VSCode package?"
+
+msgid "QoreVscodePkgInstallFailed"
+msgstr "Qore VSCode package download or installation failed. Do you want to try again?"
+
+msgid "QoreAndModulesNotFound"
+msgstr "Qore and necessary modules are not present. Qore language server will not be started."
 
 msgid "DebugAdapterNotFound ${ debugAdapter }"
 msgstr "Adapter '${ debugAdapter }' not found, Debugging support is disabled"

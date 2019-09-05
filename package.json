@@ -350,8 +350,8 @@
         "@types/mocha": "^2.2.43",
         "@types/node": "^7.0.71",
         "mocha": "^5.2.0",
-        "tslint": "^5.8.0",
-        "typescript": "^2.6.1",
+        "tslint": "^5.18.0",
+        "typescript": "^3.6.0",
         "vscode": "^1.1.31",
         "vsce": "^1.52.0",
         "vscode-debugadapter-testsupport": "^1.24.0"
@@ -359,6 +359,7 @@
     "dependencies": {
         "gettext-parser": "^2.0.0",
         "ttag": "^1.4.0",
+        "extract-zip": "^1.6.7",
         "vscode-languageclient": "^5.1.1",
         "vscode-debugprotocol": "^1.24.0",
         "vscode-debugadapter": "^1.24.0"
