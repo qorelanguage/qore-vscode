@@ -1,9 +1,13 @@
 # Changelog
 
+## 0.4.1
+
+* Added auto-install of Qore VSCode package for Windows.
+
 ## 0.4.0
 
 * Debugging support
-* Find Qore script in extension dir and environment PATH
+* Find Qore script in extension dir and environment PATH.
 
 ## 0.3.3
 
