@@ -26,7 +26,7 @@ msgid "QoreVscodePkgInstallFailed"
 msgstr "Qore VSCode package download or installation failed. Do you want to try again?"
 
 msgid "QoreAndModulesNotFound"
-msgstr "Qore and necessary modules are not present. Qore language server will not be started."
+msgstr "Qore and necessary modules are unavailable. Qore Language Server will not be started."
 
 msgid "DebugAdapterNotFound ${ debugAdapter }"
 msgstr "Adapter '${ debugAdapter }' not found, Debugging support is disabled"
