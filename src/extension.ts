@@ -60,6 +60,7 @@ function setLocale() {
     }
 }
 
+let client: languageclient.LanguageClient;
 let qoreExecutable: string;
 let debugAdapter: string;
 /*
@@ -147,15 +148,15 @@ function downloadFile(uri: string, dest: string, onSuccess, onError) {
         if (response.statusCode >= 200 && response.statusCode < 300) {
             file.on('error', localOnError);
             file.on('finish', function() {
-                console.log("download success - finish");
+                //console.log("Download success");
                 file.end();  // close() is async, call cb after close completes.
                 onSuccess();
             });
             response.pipe(file);
-        } else if (response.headers.location) {
+        } else if (response.headers.location) { // handle redirect
             downloadFile(response.headers.location, dest, onSuccess, onError);
         } else {
-            localOnError(new Error("server error: " + response));
+            localOnError(new Error("Server error: " + response));
         }
     };
 
@@ -264,16 +265,17 @@ function getServerOptions(qoreExecutable: string, serverArgs, debugServerArgs, l
 
 //! internal install function for Qore VSCode package
 function _installQoreVscodePkg(extensionPath: string, archive: string, extractedName: string, targetDir: string, onSuccess, onError) {
+    msg.info(t`InstallingQLSVscPkg`);
     let archivePath = extensionPath + "/" + archive;
 
     // unzip archive
-    extract(archivePath, {dir: targetDir}, function (err) {
+    extract(archivePath, {dir: targetDir}, err => {
         if (err) {
-            console.log("failed extracting qore vscode package: " + err);
+            console.log("Failed extracting Qore VSCode package: " + err);
             onError(err);
         }
         else {
-            console.log("successfully extracted qore vscode package");
+            console.log("Successfully extracted Qore VSCode package");
             try {
                 fs.renameSync(path.join(targetDir, extractedName), path.join(targetDir, "qore"));
             }
@@ -281,6 +283,7 @@ function _installQoreVscodePkg(extensionPath: string, archive: string, extracted
                 onError(e);
                 return;
             }
+            msg.info(t`InstalledQLSVscPkg`);
             onSuccess();
         }
     });
@@ -295,14 +298,15 @@ function installQoreVscodePkg(extensionPath: string, onSuccess, onError) {
     let filePath = extensionPath + "/" + archive;
 
     let localOnSuccess = function() {
-        console.log("downloaded qore vscode package");
+        msg.info(t`DloadedQLSVscPkg`);
         _installQoreVscodePkg(extensionPath, archive, extractedName, extensionPath, onSuccess, onError);
     };
     let localOnError = function(error) {
-        console.log("failed downloading qore vscode package");
+        console.log("Failed downloading Qore VSCode package: " + error);
         onError(error);
     };
 
+    msg.info(t`DloadingQLSVscPkg`);
     downloadFile(uri, filePath, localOnSuccess, localOnError);
 }
 
@@ -314,10 +318,13 @@ function checkQoreOk(qoreExecutable: string, launchOptions?): boolean {
         launchOptions.shell = true;
     }
 
+    console.log("Checking Qore executable: " + qoreExecutable);
     let results = child_process.spawnSync(qoreExecutable, ["-l astparser -l json -ne \"int x = 1; x++;\""], launchOptions);
     if (results.status == 0) {
+        console.log("Qore executable ok");
         return true;
     }
+    console.log("Qore executable check failed");
     return false;
 }
 
@@ -330,27 +337,25 @@ function checkQoreVscodePkgOk(context: vscode.ExtensionContext) {
 
 //! check that Qore debugger is working
 function checkDebuggerOk(qoreExecutable: string, dbg: string): boolean {
+    console.log("Checking Qore debugger with Qore executable: " + qoreExecutable);
     let results = child_process.spawnSync(qoreExecutable, [dbg, "-h"], {shell: true});
     if (results.status != 1) {
+        console.log("Qore debugger check failed");
         return false;
     }
+    console.log("Qore debugger ok");
     return true;
 }
 
-function launchLanguageClient(context: vscode.ExtensionContext, serverOptions, clientOptions) {
-    let lc = new languageclient.LanguageClient('qls', 'Qore Language Server', serverOptions, clientOptions);
-    let disposable;
-
-    disposable = lc.start();
-    console.log(t`StartedQLS`);
-
-    // Push the disposable to the context's subscriptions so that the
-    // client can be deactivated on extension deactivation
-    context.subscriptions.push(disposable);
+function launchLanguageClient(serverOptions, clientOptions) {
+    client = new languageclient.LanguageClient('qls', 'Qore Language Server', serverOptions, clientOptions);
+    client.start();
+    msg.log(t`StartedLanguageClient`);
 }
 
 function launchQLS(context: vscode.ExtensionContext, qoreExecutable: string, serverOptions?: languageclient.ServerOptions) {
     if (serverOptions == undefined) {
+        msg.logPlusConsole(t`LaunchingQLSWithExe ${qoreExecutable}`);
         // language server command-line arguments
         let serverArgs = getServerArgs(context);
         let debugServerArgs = serverArgs;
@@ -363,36 +368,59 @@ function launchQLS(context: vscode.ExtensionContext, qoreExecutable: string, ser
     let clientOptions = getClientOptions();
 
     // create the language client and start it
-    launchLanguageClient(context, serverOptions, clientOptions);
+    launchLanguageClient(serverOptions, clientOptions);
+    msg.logPlusConsole(t`StartedQLS`);
 }
 
 function launchQLSWithQoreVscodePkg(context: vscode.ExtensionContext) {
+    msg.logPlusConsole(t`LaunchingQLSVscPkg`);
     let qoreExecutable = getQoreVscodePkgQoreExecutable(context);
     let env = getQoreVscodePkgEnv(context);
     let serverArgs = getServerArgs(context);
-    let serverOptions = getServerOptions("qore", serverArgs, serverArgs, { env: env });
+    let serverOptions = getServerOptions(qoreExecutable, serverArgs, serverArgs, { env: env });
+    msg.logPlusConsole(t`LaunchingQLSWithExe ${qoreExecutable}`);
     launchQLS(context, qoreExecutable, serverOptions);
 }
 
 function pushDebugSubscriptions(context: vscode.ExtensionContext) {
     // debug commands
     context.subscriptions.push(vscode.commands.registerCommand('extension.qore-vscode.getFilename', _config => {
-        // show input box is invoded async in executeCommandVariables so result of command is a Thenable object
+        // show input box is invoked async in executeCommandVariables so result of command is a Thenable object
         return vscode.window.showInputBox({
             //prompt: "",
             placeHolder: t`FilenamePlaceHolder`,
             value: "script.q"
-        });
+        }).then(
+            input => {
+                if (!input) {
+                    return;
+                }
+                console.log("Got input in qore-vscode.getFilename command: " + input);
+                // ignored for now
+                // TODO tmandys has to explain why the input is ignored here
+            },
+            err => {
+                console.log(err);
+            }
+        );
     }));
     context.subscriptions.push(vscode.commands.registerCommand('extension.qore-vscode.getConnection', _config => {
         return vscode.window.showInputBox({
             placeHolder: t`ConnectionPlaceHolder`,
             value: "ws://localhost:8001/debug"
-        }).then(conn => {
-            // save value for getProgramFromList
-            currentConnection = conn;
-            return conn;
-        });
+        }).then(
+            conn => {
+                if (!conn) {
+                    throw Error();
+                }
+                // save value for getProgramFromList
+                currentConnection = conn;
+                return conn;
+            },
+            err => {
+                console.log(err);
+            }
+        );
     }));
     context.subscriptions.push(vscode.commands.registerCommand('extension.qore-vscode.getProgram', config => {
         config.connection = currentConnection;  // resolve potential variable
@@ -406,7 +434,19 @@ function pushDebugSubscriptions(context: vscode.ExtensionContext) {
         return vscode.window.showQuickPick(items, {
             canPickMany: false,
             placeHolder: t`ProgramPlaceHolder`,
-        });
+        }).then(
+            input => {
+                if (!input) {
+                    return;
+                }
+                console.log("Got input in qore-vscode.getProgram command: " + input);
+                // ignored for now
+                // TODO tmandys has to explain why the input is ignored here
+            },
+            err => {
+                console.log(err);
+            }
+        );
     }));
 
     // debug configuration classes
@@ -430,6 +470,7 @@ function pushDebugSubscriptions(context: vscode.ExtensionContext) {
         }
     }));
     context.subscriptions.push(vscode.debug.onDidReceiveDebugSessionCustomEvent(_event => {
+        // ignored
     }));
 }
 
@@ -480,34 +521,39 @@ export async function activate(context: vscode.ExtensionContext) {
             launchQLSWithQoreVscodePkg(context);
         }
         else {
-            msg.warning(t`QoreAndModulesNotFound`);
-
             if (platform() == "win32") {
-                let install = function(msg: string, isErr: boolean, ok, err) {
+                let install = function(messageToShow: string, showError: boolean, onSuccess, onError) {
                     let installThen = selection => {
                         if (selection != "Yes") {
                             return;
                         }
-                        installQoreVscodePkg(context.extensionPath, ok, err);
+                        installQoreVscodePkg(context.extensionPath, onSuccess, onError);
                     };
-                    if (isErr) {
-                        vscode.window.showErrorMessage(msg, "Yes", "No").then(installThen);
+                    if (showError) {
+                        vscode.window.showErrorMessage(messageToShow, "Yes", "No").then(
+                            installThen,
+                            err => { msg.logPlusConsole(String(err)); }
+                        );
                     }
                     else {
-                        vscode.window.showWarningMessage(msg, "Yes", "No").then(installThen);
+                        vscode.window.showWarningMessage(messageToShow, "Yes", "No").then(
+                            installThen,
+                            err => { msg.logPlusConsole(String(err)); }
+                        );
                     }
                 };
                 let installOk = () => {
                     launchQLSWithQoreVscodePkg(context);
                 };
                 let installErr = err => {
-                    console.log("download of qore vscode package failed: " + err);
+                    msg.logPlusConsole("Download of Qore VSCode package failed: " + err);
                     install(t`QoreVscodePkgInstallFailed`, true, installOk, installErr);
                 };
 
                 install(t`QoreNotOkInstallVscodePkg`, false, installOk, installErr);
             }
             else {
+                msg.warning(t`QoreAndModulesNotFound`);
                 openInBrowser("https://github.com/qorelanguage/qore-vscode/wiki/Visual-Code-for-Qore-Language-Setup");
             }
         }
@@ -529,6 +575,10 @@ export async function activate(context: vscode.ExtensionContext) {
 
 // this method is called when your extension is deactivated
 export function deactivate() {
+    if (!client) {
+        return undefined;
+    }
+    return client.stop();
 }
 
 // debugger stuff

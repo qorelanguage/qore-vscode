@@ -16,8 +16,20 @@ msgstr "Using default locale '${ locale }'"
 msgid "QoreExecutable ${ executable }"
 msgstr "Qore executable: ${ executable }"
 
+msgid "StartingQLS"
+msgstr "Starting QLS"
+
 msgid "StartedQLS"
 msgstr "Started QLS"
+
+msgid "StartedLanguageClient"
+msgstr "Started language client for QLS"
+
+msgid "LaunchingQLSWithExe ${ executable }"
+msgstr "Launching QLS with Qore executable: ${ executable }"
+
+msgid "LaunchingQLSVscPkg"
+msgstr"Launching QLS using Qore VSCode package"
 
 msgid "QoreNotOkInstallVscodePkg"
 msgstr "Qore is necessary for the Qore and Qorus extensions to work correctly. Do you want to automatically download and install Qore VSCode package?"
@@ -27,6 +39,18 @@ msgstr "Qore VSCode package download or installation failed. Do you want to try 
 
 msgid "QoreAndModulesNotFound"
 msgstr "Qore and necessary modules are unavailable. Qore Language Server will not be started."
+
+msgid "DloadingQLSVscPkg"
+msgstr"Downloading Qore VSCode package."
+
+msgid "DloadedQLSVscPkg"
+msgstr"Successfully downloaded Qore VSCode package."
+
+msgid "InstallingQLSVscPkg"
+msgstr"Installing Qore VSCode package."
+
+msgid "InstalledQLSVscPkg"
+msgstr"Successfully installed Qore VSCode package."
 
 msgid "DebugAdapterNotFound ${ debugAdapter }"
 msgstr "Adapter '${ debugAdapter }' not found, Debugging support is disabled"
