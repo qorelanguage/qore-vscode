@@ -137,10 +137,10 @@ function downloadFile(uri: string, dest: string, onSuccess, onError) {
     let protocol = url.parse(uri).protocol.slice(0, -1);
     let file = fs.createWriteStream(dest);
 
-    let localOnError = function(err) {
-        console.log("error: " + err);
-        fs.unlink(dest); // Delete the file async. (But we don't check the result)
-        onError(err);
+    let localOnError = function(error) {
+        console.log("error: " + error);
+        fs.unlink(dest, err => { onError(err); }); // Delete the file async. (But we don't check the result)
+        onError(error);
     };
 
     let dloadFunc = function(response) {
