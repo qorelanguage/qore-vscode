@@ -166,6 +166,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 vscode.workspace.createFileSystemWatcher('**/*.qfd'),
                 vscode.workspace.createFileSystemWatcher('**/*.qwf'),
                 vscode.workspace.createFileSystemWatcher('**/*.qjob'),
+                vscode.workspace.createFileSystemWatcher('**/*.qstep'),
                 vscode.workspace.createFileSystemWatcher('**/*.qclass'),
                 vscode.workspace.createFileSystemWatcher('**/*.qconst'),
                 vscode.workspace.createFileSystemWatcher('**/*.qsm')

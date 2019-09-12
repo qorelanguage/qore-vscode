@@ -2,7 +2,7 @@
     "name": "qore-vscode",
     "displayName": "Qore",
     "description": "Qore language support for VS Code",
-    "version": "0.4.0",
+    "version": "0.4.2",
     "publisher": "qoretechnologies",
     "author": {
         "name": "Qore Technologies",
@@ -67,7 +67,8 @@
                     ".qsd",
                     ".qsm",
                     ".qtest",
-                    ".qwf"
+                    ".qwf",
+                    ".qstep"
                 ],
                 "firstLine": "^((#.*mode:[ ]*qore)|(#!/usr/bin/env qore))",
                 "configuration": "./qore.configuration.json"
