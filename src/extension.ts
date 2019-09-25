@@ -1,5 +1,3 @@
-'use strict';
-
 import * as child_process from 'child_process';
 import * as vscode from 'vscode';
 import * as languageclient from 'vscode-languageclient';
@@ -11,6 +9,16 @@ import * as msg from './qore_message';
 import { t, addLocale, useLocale } from 'ttag';
 import * as gettext_parser from 'gettext-parser';
 import { WorkspaceFolder, DebugConfiguration, ProviderResult, CancellationToken } from 'vscode';
+
+export interface QoreTextDocument {
+    uri: string;
+    text: string;
+    languageId: string;
+    version: number;
+}
+
+let languageClient: languageclient.LanguageClient;
+let languageClientReady: boolean = false;
 
 setLocale();
 
@@ -60,7 +68,6 @@ function setLocale() {
     }
 }
 
-let client: languageclient.LanguageClient;
 let qoreExecutable: string;
 let debugAdapter: string;
 /*
@@ -118,7 +125,7 @@ function openInBrowser(url: string) {
         default:
             executable = '';
     }
-    let command: string = executable + ' ' + url;
+    const command: string = executable + ' ' + url;
     try {
         child_process.execSync(command);
     }
@@ -223,6 +230,7 @@ function getClientOptions(): languageclient.LanguageClientOptions {
                 vscode.workspace.createFileSystemWatcher('**/*.qfd'),
                 vscode.workspace.createFileSystemWatcher('**/*.qwf'),
                 vscode.workspace.createFileSystemWatcher('**/*.qjob'),
+                vscode.workspace.createFileSystemWatcher('**/*.qstep'),
                 vscode.workspace.createFileSystemWatcher('**/*.qclass'),
                 vscode.workspace.createFileSystemWatcher('**/*.qconst'),
                 vscode.workspace.createFileSystemWatcher('**/*.qsm')
@@ -348,8 +356,11 @@ function checkDebuggerOk(qoreExecutable: string, dbg: string): boolean {
 }
 
 function launchLanguageClient(serverOptions, clientOptions) {
-    client = new languageclient.LanguageClient('qls', 'Qore Language Server', serverOptions, clientOptions);
-    client.start();
+    languageClient = new languageclient.LanguageClient('qls', 'Qore Language Server', serverOptions, clientOptions);
+    languageClient.onReady().then(
+        () => languageClientReady = true
+    );
+    languageClient.start();
     msg.log(t`StartedLanguageClient`);
 }
 
@@ -475,7 +486,7 @@ function pushDebugSubscriptions(context: vscode.ExtensionContext) {
 }
 
 function getNoDebugExportApi() {
-    let api = {
+    const api = {
         getQoreExecutable(): string {
             return qoreExecutable;
         }
@@ -484,7 +495,7 @@ function getNoDebugExportApi() {
 }
 
 function getExportApi() {
-    let api = {
+    const api = {
         execDebugAdapterCommand(configuration: DebugConfiguration, command: string): any {
             return execDebugAdapterCommand(configuration, command);
         },
@@ -493,9 +504,31 @@ function getExportApi() {
         },
         getExecutableArguments(configuration: DebugConfiguration): string[] {
             return getExecutableArguments(configuration);
+        },
+        async getDocumentSymbols(doc: QoreTextDocument, ret_type?: string): Promise<any> {
+            let n = 100;
+            while (!languageClientReady && --n) {
+                await new Promise(resolve => setTimeout(resolve, 200));
+            }
+            return getDocumentSymbolsIntern(doc, ret_type);
         }
     };
     return api;
+}
+
+function getDocumentSymbolsIntern(doc: QoreTextDocument, ret_type?: string): any {
+    const params = {
+        textDocument: doc,
+        ... ret_type ? { ret_type } : {}
+    };
+
+    try {
+        languageClient.sendRequest('textDocument/didOpen', params);
+        return languageClient.sendRequest('textDocument/documentSymbol', params);
+    }
+    catch (e){
+        return Promise.resolve(null);
+    }
 }
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -575,10 +608,10 @@ export async function activate(context: vscode.ExtensionContext) {
 
 // this method is called when your extension is deactivated
 export function deactivate() {
-    if (!client) {
+    if (!languageClient) {
         return undefined;
     }
-    return client.stop();
+    return languageClient.stop();
 }
 
 // debugger stuff
