@@ -2,7 +2,7 @@
     "name": "qore-vscode",
     "displayName": "Qore",
     "description": "Qore language support for VS Code",
-    "version": "0.4.1",
+    "version": "0.4.2",
     "publisher": "qoretechnologies",
     "author": {
         "name": "Qore Technologies",
@@ -153,7 +153,28 @@
                 }
             ]
         },
-        "commands": [],
+        "commands": [
+            {
+                "command": "qore-vscode.installQoreVscPkg",
+                "title": "Install Qore VSCode package"
+            },
+            {
+                "command": "qore-vscode.reinstallQoreVscPkg",
+                "title": "Reinstall Qore VSCode package"
+            },
+            {
+                "command": "qore-vscode.updateQoreVscPkg",
+                "title": "Update Qore VSCode package"
+            },
+            {
+                "command": "qore-vscode.stopQLS",
+                "title": "Stop Qore Language Server (QLS)"
+            },
+            {
+                "command": "qore-vscode.startQLS",
+                "title": "Start Qore Language Server (QLS)"
+            }
+        ],
         "breakpoints": [
             {
                 "language": "qore"
@@ -364,6 +385,7 @@
         "gettext-parser": "^2.0.0",
         "ttag": "^1.4.0",
         "extract-zip": "^1.6.7",
+        "fs-extra": "^8.1.0",
         "vscode-languageclient": "^5.1.1",
         "vscode-debugprotocol": "^1.24.0",
         "vscode-debugadapter": "^1.24.0"

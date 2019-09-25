@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.2
+
+* Added user commands for (re)installing and updating Qore VSCode package for Windows.
+* Added user commands for starting and stopping QLS.
+
 ## 0.4.1
 
 * Added auto-install of Qore VSCode package for Windows.
