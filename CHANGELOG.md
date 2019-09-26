@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.3
+
+* Fixed internal parameter name in QLS.
+
 ## 0.4.2
 
 * Added user commands for (re)installing and updating Qore VSCode package for Windows.

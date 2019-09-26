@@ -519,7 +519,7 @@ function qoreVscodePkgInstallation(context: vscode.ExtensionContext) {
     const installOk = () => {
         startQLSWithQoreVscodePkg(context);
     };
-    let installErr = err => {
+    let installErr = () => {
         install(t`TryAgainQoreVscPkgInstall`, true, installOk, installErr);
     };
 
@@ -649,12 +649,12 @@ function registerCommands(context: vscode.ExtensionContext) {
                 msg.warning(t`QoreVscPkgAlreadyInstalled`);
                 return;
             }
-            installQoreVscPkg(context.extensionPath, () => {}, err => {});
+            installQoreVscPkg(context.extensionPath, () => {}, () => {});
         }));
 
         // reinstall Qore VSCode package command
         context.subscriptions.push(vscode.commands.registerCommand('qore-vscode.reinstallQoreVscPkg', _config => {
-            installQoreVscPkg(context.extensionPath, () => {}, err => {});
+            installQoreVscPkg(context.extensionPath, () => {}, () => {});
         }));
 
         // update Qore VSCode package command
@@ -664,10 +664,10 @@ function registerCommands(context: vscode.ExtensionContext) {
             const currentVer = getInstalledQoreVscPkgVersion(context.extensionPath);
             const result = compareVersion(latestVer, currentVer);
             if (result == undefined) {
-                installQoreVscPkg(context.extensionPath, () => {}, err => {});
+                installQoreVscPkg(context.extensionPath, () => {}, () => {});
             }
             else if (result == 1) {
-                installQoreVscPkg(context.extensionPath, () => {}, err => {});
+                installQoreVscPkg(context.extensionPath, () => {}, () => {});
             }
             else {
                 msg.info(t`LatestQoreVscPkgInstalled`);
