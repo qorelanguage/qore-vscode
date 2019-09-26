@@ -1,5 +1,3 @@
-'use strict';
-
 import * as child_process from 'child_process';
 import * as vscode from 'vscode';
 import * as languageclient from 'vscode-languageclient';
@@ -11,6 +9,33 @@ import * as msg from './qore_message';
 import { t, addLocale, useLocale } from 'ttag';
 import * as gettext_parser from 'gettext-parser';
 import { WorkspaceFolder, DebugConfiguration, ProviderResult, CancellationToken } from 'vscode';
+
+export interface QoreTextDocument {
+    uri: string;
+    text: string;
+    languageId: string;
+    version: number;
+}
+
+let languageClient: languageclient.LanguageClient | undefined = undefined;
+let languageClientReady: boolean = false;
+let startedQLS: boolean = false;
+let stoppingQLS: boolean = false;
+let installInProgress: boolean = false;
+let qoreExecutable: string = "";
+let debugAdapter: string;
+/*
+    We need list of programs in GUI via registerCommand(extension.qore-vscode.getProgram)
+    but the connection is also resolvable in registerCommand(extension.qore-vscode.getConnection).
+    getConnection is called first but does not update config passed to getProgram. So as
+    workaround we pass value via global variable currentConnection which won't work if any
+    other resolvable variable appears in connection launch.json.
+
+    Resolving is executed via Debugger::substituesVariables() but I did not find way how to override default
+    handling in extension module. Seems we should create new Debuuger class and somehow register for 'qore'
+    but it is done in vscode core via contributes.debuggers in package.json.
+*/
+let currentConnection: string | undefined;
 
 setLocale();
 
@@ -60,35 +85,22 @@ function setLocale() {
     }
 }
 
-let client: languageclient.LanguageClient | undefined = undefined;
-let startedQLS: boolean = false;
-let stoppingQLS: boolean = false;
-let qoreExecutable: string = "";
-let debugAdapter: string;
-/*
-    We need list of programs in GUI via registerCommand(extension.qore-vscode.getProgram)
-    but the connection is also resolvable in registerCommand(extension.qore-vscode.getConnection).
-    getConnection is called first but does not update config passed to getProgram. So as
-    workaround we pass value via global variable currentConnection which won't work if any
-    other resolvable variable appears in connection launch.json.
-
-    Resolving is executed via Debugger::substituesVariables() but I did not find way how to override default
-    handling in extension module. Seems we should create new Debuuger class and somehow register for 'qore'
-    but it is done in vscode core via contributes.debuggers in package.json.
-*/
-let currentConnection: string | undefined;
-
 function compareVersion(v1, v2) {
-    if (typeof v1 !== 'string') return undefined;
-    if (typeof v2 !== 'string') return undefined;
+    if ((typeof v1 !== 'string') || (typeof v2 !== 'string')) {
+        return undefined;
+    }
     v1 = v1.split('.');
     v2 = v2.split('.');
     const k = Math.min(v1.length, v2.length);
     for (let i = 0; i < k; ++ i) {
         v1[i] = parseInt(v1[i], 10);
         v2[i] = parseInt(v2[i], 10);
-        if (v1[i] > v2[i]) return 1;
-        if (v1[i] < v2[i]) return -1;        
+        if (v1[i] > v2[i]) {
+            return 1;
+        }
+        if (v1[i] < v2[i]) {
+            return -1;
+        }
     }
     return v1.length == v2.length ? 0: (v1.length < v2.length ? -1 : 1);
 }
@@ -135,7 +147,7 @@ function openInBrowser(url: string) {
         default:
             executable = '';
     }
-    let command: string = executable + ' ' + url;
+    const command: string = executable + ' ' + url;
     try {
         child_process.execSync(command);
     }
@@ -283,6 +295,7 @@ function getClientOptions(): languageclient.LanguageClientOptions {
                 vscode.workspace.createFileSystemWatcher('**/*.qfd'),
                 vscode.workspace.createFileSystemWatcher('**/*.qwf'),
                 vscode.workspace.createFileSystemWatcher('**/*.qjob'),
+                vscode.workspace.createFileSystemWatcher('**/*.qstep'),
                 vscode.workspace.createFileSystemWatcher('**/*.qclass'),
                 vscode.workspace.createFileSystemWatcher('**/*.qconst'),
                 vscode.workspace.createFileSystemWatcher('**/*.qsm')
@@ -420,8 +433,6 @@ function _installQoreVscPkg(extensionPath: string, version: string, archive: str
     });
 }
 
-let installInProgress = false;
-
 //! download and install Qore VSCode package
 async function installQoreVscPkg(extensionPath: string, onSuccess, onError) {
     if (installInProgress) {
@@ -521,7 +532,7 @@ async function stopQLS() {
     }
     stoppingQLS = true;
 
-    if (!startedQLS || client == undefined) {
+    if (!startedQLS || languageClient == undefined) {
         msg.logPlusConsole(t`QLSAlreadyStopped`);
         stoppingQLS = false;
         return;
@@ -529,14 +540,14 @@ async function stopQLS() {
 
     msg.logPlusConsole(t`StoppingQLS`);
     try {
-        await client.stop();
+        await languageClient.stop();
     }
     catch (err) {
         msg.logPlusConsole("Failed stopping QLS: " + err);
         stoppingQLS = false;
         return;
     }
-    client = undefined;
+    languageClient = undefined;
     startedQLS = false;
     await new Promise(done => setTimeout(done, 500));
     msg.info(t`StoppedQLS`);
@@ -545,13 +556,16 @@ async function stopQLS() {
 }
 
 function launchLanguageClient(serverOptions, clientOptions) {
-    client = new languageclient.LanguageClient(
+    languageClient = new languageclient.LanguageClient(
         'qls',
         'Qore Language Server',
         serverOptions,
         clientOptions
     );
-    client.start();
+    languageClient.onReady().then(
+        () => { languageClientReady = true; }
+    );
+    languageClient.start();
     startedQLS = true;
     msg.log(t`StartedLanguageClient`);
 }
@@ -628,6 +642,8 @@ function doQLSLaunch(context: vscode.ExtensionContext, useQLS, launchOnly: boole
 
 function registerCommands(context: vscode.ExtensionContext) {
     if (platform() == "win32") {
+        // install Qore VSCode package command
+        // only installs if it is not installed yet, otherwise shows a warning
         context.subscriptions.push(vscode.commands.registerCommand('qore-vscode.installQoreVscPkg', _config => {
             if (isQoreVscodePkgInstalled(context.extensionPath)) {
                 msg.warning(t`QoreVscPkgAlreadyInstalled`);
@@ -635,9 +651,14 @@ function registerCommands(context: vscode.ExtensionContext) {
             }
             installQoreVscPkg(context.extensionPath, () => {}, err => {});
         }));
+
+        // reinstall Qore VSCode package command
         context.subscriptions.push(vscode.commands.registerCommand('qore-vscode.reinstallQoreVscPkg', _config => {
             installQoreVscPkg(context.extensionPath, () => {}, err => {});
         }));
+
+        // update Qore VSCode package command
+        // updates if installed version is lower than latest
         context.subscriptions.push(vscode.commands.registerCommand('qore-vscode.updateQoreVscPkg', _config => {
             const latestVer = getLatestQoreVscPkgVersion();
             const currentVer = getInstalledQoreVscPkgVersion(context.extensionPath);
@@ -654,11 +675,14 @@ function registerCommands(context: vscode.ExtensionContext) {
         }));
     }
 
+    // stop QLS command
     context.subscriptions.push(vscode.commands.registerCommand('qore-vscode.stopQLS', _config => {
         stopQLS();
     }));
+
+    // start QLS command
     context.subscriptions.push(vscode.commands.registerCommand('qore-vscode.startQLS', _config => {
-        if (startedQLS || client != undefined) {
+        if (startedQLS || languageClient != undefined) {
             msg.info(t`QLSAlreadyStarted`);
             return;
         }
@@ -760,7 +784,7 @@ function pushDebugSubscriptions(context: vscode.ExtensionContext) {
 }
 
 function getNoDebugExportApi() {
-    let api = {
+    const api = {
         getQoreExecutable(): string {
             return qoreExecutable;
         }
@@ -769,7 +793,7 @@ function getNoDebugExportApi() {
 }
 
 function getExportApi() {
-    let api = {
+    const api = {
         execDebugAdapterCommand(configuration: DebugConfiguration, command: string): any {
             return execDebugAdapterCommand(configuration, command);
         },
@@ -778,9 +802,34 @@ function getExportApi() {
         },
         getExecutableArguments(configuration: DebugConfiguration): string[] {
             return getExecutableArguments(configuration);
+        },
+        async getDocumentSymbols(doc: QoreTextDocument, retType?: string): Promise<any> {
+            let n = 100;
+            while (!languageClientReady && --n) {
+                await new Promise(resolve => setTimeout(resolve, 200));
+            }
+            return getDocumentSymbolsIntern(doc, retType);
         }
     };
     return api;
+}
+
+function getDocumentSymbolsIntern(doc: QoreTextDocument, retType?: string): any {
+    const params = {
+        textDocument: doc,
+        ... retType ? { retType } : {}
+    };
+    if (languageClient == undefined) {
+        return Promise.resolve(null);
+    }
+
+    try {
+        languageClient.sendRequest('textDocument/didOpen', params);
+        return languageClient.sendRequest('textDocument/documentSymbol', params);
+    }
+    catch (e){
+        return Promise.resolve(null);
+    }
 }
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -814,10 +863,10 @@ export async function activate(context: vscode.ExtensionContext) {
 
 // this method is called when your extension is deactivated
 export function deactivate() {
-    if (!client) {
+    if (!languageClient) {
         return undefined;
     }
-    return client.stop();
+    return languageClient.stop();
 }
 
 // debugger stuff

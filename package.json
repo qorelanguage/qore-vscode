@@ -67,7 +67,8 @@
                     ".qsd",
                     ".qsm",
                     ".qtest",
-                    ".qwf"
+                    ".qwf",
+                    ".qstep"
                 ],
                 "firstLine": "^((#.*mode:[ ]*qore)|(#!/usr/bin/env qore))",
                 "configuration": "./qore.configuration.json"
@@ -378,7 +379,7 @@
         "tslint": "^5.16.0",
         "typescript": "^3.5.2",
         "vscode-test": "^1.0.0",
-        "vsce": "^1.64.0",
+        "vsce": "^1.65.0",
         "vscode-debugadapter-testsupport": "^1.24.0"
     },
     "dependencies": {
