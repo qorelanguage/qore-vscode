@@ -9,6 +9,7 @@ import { t, addLocale, useLocale } from 'ttag';
 import * as gettext_parser from 'gettext-parser';
 import { WorkspaceFolder, DebugConfiguration, ProviderResult, CancellationToken } from 'vscode';
 
+import { getClientOptions } from './clientOptions';
 import { getServerArgs } from './serverArgs';
 import * as msg from './qore_message';
 import { compareVersion, downloadFile, findScript, openInBrowser } from './utils';
@@ -158,37 +159,6 @@ function isQoreVscodePkgInstalled(extensionPath: string): boolean {
         return false;
     }
     return true;
-}
-
-//! options to control the language client
-function getClientOptions(): languageclient.LanguageClientOptions {
-    const clientOptions: languageclient.LanguageClientOptions = {
-        // docs regarding documentSelector:
-        // https://code.visualstudio.com/Docs/extensionAPI/vscode-api#DocumentSelector
-        // https://code.visualstudio.com/Docs/extensionAPI/vscode-api#DocumentFilter
-        documentSelector: [{scheme: 'file', language: 'qore'}],
-        synchronize: {
-            // synchronize the setting section 'qore' to the server
-            configurationSection: 'qore',
-            // notify the server about file changes to qore files contained in the workspace
-            fileEvents: [
-                vscode.workspace.createFileSystemWatcher('**/*.q'),
-                vscode.workspace.createFileSystemWatcher('**/*.qm'),
-                vscode.workspace.createFileSystemWatcher('**/*.qtest'),
-                vscode.workspace.createFileSystemWatcher('**/*.ql'),
-                vscode.workspace.createFileSystemWatcher('**/*.qc'),
-                vscode.workspace.createFileSystemWatcher('**/*.qsd'),
-                vscode.workspace.createFileSystemWatcher('**/*.qfd'),
-                vscode.workspace.createFileSystemWatcher('**/*.qwf'),
-                vscode.workspace.createFileSystemWatcher('**/*.qjob'),
-                vscode.workspace.createFileSystemWatcher('**/*.qstep'),
-                vscode.workspace.createFileSystemWatcher('**/*.qclass'),
-                vscode.workspace.createFileSystemWatcher('**/*.qconst'),
-                vscode.workspace.createFileSystemWatcher('**/*.qsm')
-            ]
-        }
-    };
-    return clientOptions;
 }
 
 //! language server options
