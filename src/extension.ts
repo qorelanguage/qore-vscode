@@ -11,6 +11,7 @@ import { WorkspaceFolder, DebugConfiguration, ProviderResult, CancellationToken 
 
 import { getClientOptions } from './clientOptions';
 import { getServerArgs } from './serverArgs';
+import { getServerOptions } from './serverOptions';
 import * as msg from './qore_message';
 import { compareVersion, downloadFile, findScript, openInBrowser } from './utils';
 
@@ -159,53 +160,6 @@ function isQoreVscodePkgInstalled(extensionPath: string): boolean {
         return false;
     }
     return true;
-}
-
-//! language server options
-function getServerOptions(qoreExecutable: string, serverArgs, debugServerArgs, launchOptions?): languageclient.ServerOptions {
-    let serverOptions: languageclient.ServerOptions;
-    const DEV_MODE = false;
-    if (DEV_MODE) {
-        serverOptions = () => new Promise<child_process.ChildProcess>((resolve) => {
-            function spawnServer(): child_process.ChildProcess {
-                if (launchOptions == undefined) {
-                    launchOptions = { shell: true };
-                }
-                else {
-                    launchOptions.shell = true;
-                }
-                let childProcess = child_process.spawn(
-                    qoreExecutable,
-                    serverArgs,
-                    launchOptions
-                );
-                childProcess.stderr.on('data', data => {
-                    console.log(`stderr: ${data}`);
-                });
-                childProcess.stdout.on('data', data => {
-                    console.log(`stdout: ${data}`);
-                });
-                return childProcess; // uses stdin/stdout for communication
-            }
-
-            resolve(spawnServer());
-        });
-    }
-    else {
-        serverOptions = {
-            run: {
-                command: qoreExecutable,
-                args: serverArgs,
-                options: launchOptions
-            },
-            debug: {
-                command: qoreExecutable,
-                args: debugServerArgs,
-                options: launchOptions
-            }
-        };
-    }
-    return serverOptions;
 }
 
 //! check that Qore is working
