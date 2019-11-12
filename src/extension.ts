@@ -8,6 +8,8 @@ import * as extract from 'extract-zip';
 import { t, addLocale, useLocale } from 'ttag';
 import * as gettext_parser from 'gettext-parser';
 import { WorkspaceFolder, DebugConfiguration, ProviderResult, CancellationToken } from 'vscode';
+
+import { getServerArgs } from './serverArgs';
 import * as msg from './qore_message';
 import { compareVersion, downloadFile, findScript, openInBrowser } from './utils';
 
@@ -156,11 +158,6 @@ function isQoreVscodePkgInstalled(extensionPath: string): boolean {
         return false;
     }
     return true;
-}
-
-//! get arguments for starting QLS
-function getServerArgs(context: vscode.ExtensionContext): string[] {
-    return [findScript(context.extensionPath, path.join("qls", "qls.q"))];
 }
 
 //! options to control the language client
@@ -463,7 +460,7 @@ function startQLS(context: vscode.ExtensionContext, qoreExecutable: string, serv
     if (serverOptions == undefined) {
         msg.logPlusConsole(t`StartingQLSWithExe ${qoreExecutable}`);
         // language server command-line arguments
-        const serverArgs = getServerArgs(context);
+        const serverArgs = getServerArgs(context.extensionPath);
         const debugServerArgs = serverArgs;
 
         // language server options
@@ -486,7 +483,7 @@ function startQLSWithQoreVscodePkg(context: vscode.ExtensionContext) {
     msg.logPlusConsole(t`StartingQLSVscPkg`);
     const qoreExecutable = getQoreVscPkgQoreExecutable(context.extensionPath);
     const env = getQoreVscPkgEnv(context.extensionPath);
-    const serverArgs = getServerArgs(context);
+    const serverArgs = getServerArgs(context.extensionPath);
     const serverOptions = getServerOptions(
         qoreExecutable,
         serverArgs,
