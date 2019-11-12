@@ -10,6 +10,11 @@ import { WorkspaceFolder, DebugConfiguration, ProviderResult, CancellationToken 
 
 import { getClientOptions } from './clientOptions';
 import {
+    checkDebuggerOk,
+    checkQoreOk,
+    checkQoreVscPkgOk
+} from './qoreChecks';
+import {
     getInstalledQoreVscPkgVersion,
     getLatestQoreVscPkgVersion,
     getQoreVscPkgEnv,
@@ -94,51 +99,6 @@ function setLocale() {
     else {
         msg.log(t`UsingLocaleSettings ${locale}`);
     }
-}
-
-//! check that Qore is working
-function checkQoreOk(qoreExecutable: string, launchOptions?): boolean {
-    if (launchOptions == undefined) {
-        launchOptions = { shell: true };
-    } else {
-        launchOptions.shell = true;
-    }
-
-    console.log("Checking Qore executable: " + qoreExecutable);
-    const results = child_process.spawnSync(
-        qoreExecutable,
-        ["-l astparser -l json -ne \"int x = 1; x++;\""],
-        launchOptions
-    );
-    if (results.status == 0) {
-        console.log("Qore executable ok");
-        return true;
-    }
-    console.log("Qore executable check failed");
-    return false;
-}
-
-//! check that Qore from VSCode package is working
-function checkQoreVscodePkgOk(context: vscode.ExtensionContext) {
-    const qoreExecutable = getQoreVscPkgQoreExecutable(context.extensionPath);
-    const env = getQoreVscPkgEnv(context.extensionPath);
-    return checkQoreOk(qoreExecutable, { env: env });
-}
-
-//! check that Qore debugger is working
-function checkDebuggerOk(qoreExecutable: string, dbg: string): boolean {
-    console.log("Checking Qore debugger with Qore executable: " + qoreExecutable);
-    let results = child_process.spawnSync(
-        qoreExecutable,
-        [dbg, "-h"],
-        {shell: true}
-    );
-    if (results.status != 1) {
-        console.log("Qore debugger check failed");
-        return false;
-    }
-    console.log("Qore debugger ok");
-    return true;
 }
 
 function qoreVscodePkgInstallation(context: vscode.ExtensionContext) {
@@ -270,7 +230,7 @@ function doQLSLaunch(context: vscode.ExtensionContext, useQLS, launchOnly: boole
 
     // find out if Qore and necessary modules are present and working
     const qoreOk = checkQoreOk(qoreExecutable);
-    const qoreVscPkgOk = checkQoreVscodePkgOk(context);
+    const qoreVscPkgOk = checkQoreVscPkgOk(context.extensionPath);
 
     // start QLS
     if (qoreOk) {
