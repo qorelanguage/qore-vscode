@@ -4,11 +4,20 @@ import * as gettext_parser from 'gettext-parser';
 import { platform } from 'os';
 import { join } from 'path';
 import { t, addLocale, useLocale } from 'ttag';
-import * as vscode from 'vscode';
 import {
     CancellationToken,
+    commands,
+    debug,
+    DebugAdapterDescriptor,
+    DebugAdapterDescriptorFactory,
+    DebugAdapterExecutable,
     DebugConfiguration,
+    DebugConfigurationProvider,
+    DebugSession,
+    ExtensionContext,
     ProviderResult,
+    window,
+    workspace,
     WorkspaceFolder
 } from 'vscode';
 
@@ -52,7 +61,7 @@ function setLocale() {
     let use_default_locale: boolean = false;
 
     let po_file: string | undefined = undefined;
-    let locale: string = vscode.workspace.getConfiguration().typescript.locale;
+    let locale: string = workspace.getConfiguration().typescript.locale;
 
     function setPoFile() {
         if (use_default_locale) {
@@ -106,13 +115,13 @@ function qoreVscPkgInstallation(extensionPath: string) {
             installQoreVscPkg(extensionPath, onSuccess, onError);
         };
         if (showError) {
-            vscode.window.showErrorMessage(messageToShow, "Yes", "No").then(
+            window.showErrorMessage(messageToShow, "Yes", "No").then(
                 installThen,
                 err => { msg.logPlusConsole(String(err)); }
             );
         }
         else {
-            vscode.window.showWarningMessage(messageToShow, "Yes", "No").then(
+            window.showWarningMessage(messageToShow, "Yes", "No").then(
                 installThen,
                 err => { msg.logPlusConsole(String(err)); }
             );
@@ -128,9 +137,9 @@ function qoreVscPkgInstallation(extensionPath: string) {
     install(t`QoreNotOkInstallQoreVscPkg`, false, installOk, installErr);
 }
 
-function doQLSLaunch(context: vscode.ExtensionContext, useQLS, launchOnly: boolean) {
+function doQLSLaunch(context: ExtensionContext, useQLS, launchOnly: boolean) {
     if (qoreExecutable == "") {
-        qoreExecutable = vscode.workspace.getConfiguration("qore").get("executable") || "qore";
+        qoreExecutable = workspace.getConfiguration("qore").get("executable") || "qore";
         console.log(t`QoreExecutable ${qoreExecutable}`);
     }
 
@@ -160,11 +169,11 @@ function doQLSLaunch(context: vscode.ExtensionContext, useQLS, launchOnly: boole
     }
 }
 
-function registerCommands(context: vscode.ExtensionContext) {
+function registerCommands(context: ExtensionContext) {
     if (platform() == "win32") {
         // install Qore VSCode package command
         // only installs if it is not installed yet, otherwise shows a warning
-        context.subscriptions.push(vscode.commands.registerCommand('qore-vscode.installQoreVscPkg', async _config => {
+        context.subscriptions.push(commands.registerCommand('qore-vscode.installQoreVscPkg', async _config => {
             if (isQoreVscPkgInstalled(context.extensionPath)) {
                 msg.warning(t`QoreVscPkgAlreadyInstalled`);
                 return;
@@ -177,7 +186,7 @@ function registerCommands(context: vscode.ExtensionContext) {
         }));
 
         // reinstall Qore VSCode package command
-        context.subscriptions.push(vscode.commands.registerCommand('qore-vscode.reinstallQoreVscPkg', async _config => {
+        context.subscriptions.push(commands.registerCommand('qore-vscode.reinstallQoreVscPkg', async _config => {
             // stop QLS if it's running
             await qlsManager.stop();
 
@@ -186,7 +195,7 @@ function registerCommands(context: vscode.ExtensionContext) {
 
         // update Qore VSCode package command
         // updates if installed version is lower than latest
-        context.subscriptions.push(vscode.commands.registerCommand('qore-vscode.updateQoreVscPkg', async _config => {
+        context.subscriptions.push(commands.registerCommand('qore-vscode.updateQoreVscPkg', async _config => {
             const latestVer = getLatestQoreVscPkgVersion();
             const currentVer = getInstalledQoreVscPkgVersion(context.extensionPath);
             const result = compareVersion(latestVer, currentVer);
@@ -203,12 +212,12 @@ function registerCommands(context: vscode.ExtensionContext) {
     }
 
     // stop QLS command
-    context.subscriptions.push(vscode.commands.registerCommand('qore-vscode.stopQLS', _config => {
+    context.subscriptions.push(commands.registerCommand('qore-vscode.stopQLS', _config => {
         qlsManager.stop();
     }));
 
     // start QLS command
-    context.subscriptions.push(vscode.commands.registerCommand('qore-vscode.startQLS', _config => {
+    context.subscriptions.push(commands.registerCommand('qore-vscode.startQLS', _config => {
         if (qlsManager.started()) {
             msg.info(t`QLSAlreadyStarted`);
             return;
@@ -218,11 +227,11 @@ function registerCommands(context: vscode.ExtensionContext) {
     }));
 }
 
-function pushDebugSubscriptions(context: vscode.ExtensionContext) {
+function pushDebugSubscriptions(context: ExtensionContext) {
     // debug commands
-    context.subscriptions.push(vscode.commands.registerCommand('extension.qore-vscode.getFilename', _config => {
+    context.subscriptions.push(commands.registerCommand('extension.qore-vscode.getFilename', _config => {
         // show input box is invoked async in executeCommandVariables so result of command is a Thenable object
-        return vscode.window.showInputBox({
+        return window.showInputBox({
             //prompt: "",
             placeHolder: t`FilenamePlaceHolder`,
             value: "script.q"
@@ -240,8 +249,8 @@ function pushDebugSubscriptions(context: vscode.ExtensionContext) {
             }
         );
     }));
-    context.subscriptions.push(vscode.commands.registerCommand('extension.qore-vscode.getConnection', _config => {
-        return vscode.window.showInputBox({
+    context.subscriptions.push(commands.registerCommand('extension.qore-vscode.getConnection', _config => {
+        return window.showInputBox({
             placeHolder: t`ConnectionPlaceHolder`,
             value: "ws://localhost:8001/debug"
         }).then(
@@ -258,7 +267,7 @@ function pushDebugSubscriptions(context: vscode.ExtensionContext) {
             }
         );
     }));
-    context.subscriptions.push(vscode.commands.registerCommand('extension.qore-vscode.getProgram', config => {
+    context.subscriptions.push(commands.registerCommand('extension.qore-vscode.getProgram', config => {
         config.connection = currentConnection;  // resolve potential variable
         let pgms = execDebugAdapterCommand(config, 'pgmlist');
         let items: string[] = [];
@@ -267,7 +276,7 @@ function pushDebugSubscriptions(context: vscode.ExtensionContext) {
                 items.push(pgms[key].scriptName);
             }
         }
-        return vscode.window.showQuickPick(items, {
+        return window.showQuickPick(items, {
             canPickMany: false,
             placeHolder: t`ProgramPlaceHolder`,
         }).then(
@@ -286,26 +295,26 @@ function pushDebugSubscriptions(context: vscode.ExtensionContext) {
     }));
 
     // debug configuration classes
-    context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('qore', new QoreConfigurationProvider()));
-    context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('qore', new QoreDebugAdapterDescriptorFactory()));
+    context.subscriptions.push(debug.registerDebugConfigurationProvider('qore', new QoreConfigurationProvider()));
+    context.subscriptions.push(debug.registerDebugAdapterDescriptorFactory('qore', new QoreDebugAdapterDescriptorFactory()));
 
     // debug events
-    context.subscriptions.push(vscode.debug.onDidStartDebugSession(session => {
+    context.subscriptions.push(debug.onDidStartDebugSession(session => {
         if (session.type == "qore") {
             msg.info(t`SessionStarted ${session.configuration.program}`);
         }
     }));
-    context.subscriptions.push(vscode.debug.onDidTerminateDebugSession(session => {
+    context.subscriptions.push(debug.onDidTerminateDebugSession(session => {
         if (session.type == "qore") {
             msg.info(t`SessionTerminated ${session.configuration.program}`);
         }
     }));
-    context.subscriptions.push(vscode.debug.onDidChangeActiveDebugSession(session => {
+    context.subscriptions.push(debug.onDidChangeActiveDebugSession(session => {
         if (session !== undefined && session.type == "qore") {
             // msg.info(t`SessionChanged ${session.configuration.program}`);
         }
     }));
-    context.subscriptions.push(vscode.debug.onDidReceiveDebugSessionCustomEvent(_event => {
+    context.subscriptions.push(debug.onDidReceiveDebugSessionCustomEvent(_event => {
         // ignored
     }));
 }
@@ -341,7 +350,7 @@ function getExportApi() {
     return api;
 }
 
-export async function activate(context: vscode.ExtensionContext) {
+export async function activate(context: ExtensionContext) {
     // "Converting circular structure to JSON" when using JSON.stringify()
     // util.inspect() is proposed fix but it has another issue so limit depth
     //let util = require('util');
@@ -351,13 +360,13 @@ export async function activate(context: vscode.ExtensionContext) {
     registerCommands(context);
 
     // find out if QLS should run
-    let useQLS = vscode.workspace.getConfiguration("qore").get("useQLS");
+    let useQLS = workspace.getConfiguration("qore").get("useQLS");
 
     // launch QLS
     doQLSLaunch(context, useQLS, false);
 
     // modify debugAdapter to "/qvscdbg-test" and executable to "bash" just in case the adapter silently won't start and check command it log
-    debugAdapter = findScript(context.extensionPath, vscode.workspace.getConfiguration("qore").get("debugAdapter") || "qdbg-vsc-adapter");
+    debugAdapter = findScript(context.extensionPath, workspace.getConfiguration("qore").get("debugAdapter") || "qdbg-vsc-adapter");
     let debuggerOk = checkDebuggerOk(qoreExecutable, debugAdapter);
     if (!debuggerOk) {
         msg.error(t`DebugAdapterNotFound '${debugAdapter}'`);
@@ -376,7 +385,7 @@ export function deactivate() {
 }
 
 // debugger stuff
-class QoreConfigurationProvider implements vscode.DebugConfigurationProvider {
+class QoreConfigurationProvider implements DebugConfigurationProvider {
     /**
         Massage a debug configuration just before a debug session is being launched,
         e.g. add all missing attributes to the debug configuration.
@@ -385,7 +394,7 @@ class QoreConfigurationProvider implements vscode.DebugConfigurationProvider {
     resolveDebugConfiguration(_folder: WorkspaceFolder | undefined, config: DebugConfiguration, _token?: CancellationToken): ProviderResult<DebugConfiguration> {
         // if launch.json is missing or empty
         if (!config.type && !config.request && !config.name) {
-            const editor = vscode.window.activeTextEditor;
+            const editor = window.activeTextEditor;
             if (editor && editor.document.languageId === 'qore' ) {
                 config.type = 'qore';
                 config.name = 'Launch';
@@ -479,8 +488,8 @@ function getExecutableArguments(configuration: DebugConfiguration): string[] {
     return args;
 }
 
-class QoreDebugAdapterDescriptorFactory implements vscode.DebugAdapterDescriptorFactory {
-    createDebugAdapterDescriptor(session: vscode.DebugSession, _executable: vscode.DebugAdapterExecutable | undefined): vscode.ProviderResult<vscode.DebugAdapterDescriptor> {
+class QoreDebugAdapterDescriptorFactory implements DebugAdapterDescriptorFactory {
+    createDebugAdapterDescriptor(session: DebugSession, _executable: DebugAdapterExecutable | undefined): ProviderResult<DebugAdapterDescriptor> {
         let s: string;
         if (session.configuration.request == "attach") {
             s = t`Connecting ${session.configuration.connection} ${session.configuration.program}`;
@@ -490,7 +499,7 @@ class QoreDebugAdapterDescriptorFactory implements vscode.DebugAdapterDescriptor
         msg.info(s);
         let args: string[] = getExecutableArguments(session.configuration);
         console.log(qoreExecutable + " " + args.join(" "));
-        return new vscode.DebugAdapterExecutable(qoreExecutable, args);
+        return new DebugAdapterExecutable(qoreExecutable, args);
     }
 }
 
