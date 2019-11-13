@@ -8,7 +8,7 @@ export function getServerOptions(qoreExecutable: string, serverArgs, debugServer
     if (DEV_MODE) {
         serverOptions = () => new Promise<ChildProcess>((resolve) => {
             function spawnServer(): ChildProcess {
-                if (launchOptions == undefined) {
+                if (launchOptions === undefined) {
                     launchOptions = { shell: true };
                 }
                 else {

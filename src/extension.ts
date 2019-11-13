@@ -23,14 +23,16 @@ import {
 
 import { getDocumentSymbolsImpl, QoreTextDocument } from './documentSymbols';
 import { QLSManager } from './QLSManager';
+import { QoreLaunchConfig } from './QoreLaunchConfig';
 import {
-    checkDebuggerOk,
-    checkQoreOk,
-    checkQoreVscPkgOk
+    checkDebuggerWithLaunchConfig,
+    checkQoreLaunchConfig,
 } from './qoreChecks';
 import {
     getInstalledQoreVscPkgVersion,
     getLatestQoreVscPkgVersion,
+    getQoreVscPkgEnv,
+    getQoreVscPkgQoreExecutable,
     installQoreVscPkg,
     isQoreVscPkgInstalled
 } from './qoreVscPkg';
@@ -38,8 +40,7 @@ import * as msg from './qore_message';
 import { compareVersion, findScript, openInBrowser } from './utils';
 
 let qlsManager: QLSManager = new QLSManager();
-
-let qoreExecutable: string = "";
+let qoreLaunchCfg: QoreLaunchConfig | undefined = undefined;
 let debugAdapter: string;
 /*
     We need list of programs in GUI via registerCommand(extension.qore-vscode.getProgram)
@@ -102,6 +103,37 @@ function setLocale() {
     }
 }
 
+function setupQoreLaunchConfig(extensionPath: string) {
+    if (qoreLaunchCfg !== undefined) {
+        let configOk = checkQoreLaunchConfig(qoreLaunchCfg);
+        if (configOk) {
+            return;
+        }
+        qoreLaunchCfg = undefined;
+    }
+
+    let qoreExec: string = workspace.getConfiguration("qore").get("executable") || "qore";
+
+    // check base config
+    let launchConfig = new QoreLaunchConfig(qoreExec);
+    let configOk = checkQoreLaunchConfig(launchConfig);
+    if (configOk) {
+        qoreLaunchCfg = launchConfig;
+        return;
+    }
+
+    // check Qore VSCode package config
+    launchConfig = new QoreLaunchConfig(
+        getQoreVscPkgQoreExecutable(extensionPath),
+        getQoreVscPkgEnv(extensionPath)
+    );
+    configOk = checkQoreLaunchConfig(launchConfig);
+    if (configOk) {
+        qoreLaunchCfg = launchConfig;
+        return;
+    }
+}
+
 function qoreVscPkgInstallation(extensionPath: string) {
     const install = function(messageToShow: string, showError: boolean, onSuccess, onError) {
         const installThen = async selection => {
@@ -128,7 +160,10 @@ function qoreVscPkgInstallation(extensionPath: string) {
         }
     };
     const installOk = () => {
-        qlsManager.startWithQoreVscPkg(extensionPath);
+        setupQoreLaunchConfig(extensionPath);
+        if (qoreLaunchCfg !== undefined) {
+            qlsManager.startWithLaunchConfig(extensionPath, qoreLaunchCfg);
+        }
     };
     let installErr = () => {
         install(t`TryAgainQoreVscPkgInstall`, true, installOk, installErr);
@@ -137,30 +172,20 @@ function qoreVscPkgInstallation(extensionPath: string) {
     install(t`QoreNotOkInstallQoreVscPkg`, false, installOk, installErr);
 }
 
-function doQLSLaunch(context: ExtensionContext, useQLS, launchOnly: boolean) {
-    if (qoreExecutable == "") {
-        qoreExecutable = workspace.getConfiguration("qore").get("executable") || "qore";
-        console.log(t`QoreExecutable ${qoreExecutable}`);
-    }
+function doQLSLaunch(extensionPath: string, useQLS, launchOnly: boolean) {
+    setupQoreLaunchConfig(extensionPath);
 
+    // check if QLS should be used
     if (!useQLS) {
         return;
     }
 
-    // find out if Qore and necessary modules are present and working
-    const qoreOk = checkQoreOk(qoreExecutable);
-    const qoreVscPkgOk = checkQoreVscPkgOk(context.extensionPath);
-
-    // start QLS
-    if (qoreOk) {
-        qlsManager.start(context.extensionPath, qoreExecutable);
-    }
-    else if (qoreVscPkgOk) {
-        qlsManager.startWithQoreVscPkg(context.extensionPath);
+    if (qoreLaunchCfg !== undefined) {
+        qlsManager.startWithLaunchConfig(extensionPath, qoreLaunchCfg);
     }
     else if (!launchOnly) {
         if (platform() == "win32") { // offer installing Qore VSCode package
-            qoreVscPkgInstallation(context.extensionPath);
+            qoreVscPkgInstallation(extensionPath);
         }
         else {
             msg.warning(t`QoreAndModulesNotFound`);
@@ -199,7 +224,7 @@ function registerCommands(context: ExtensionContext) {
             const latestVer = getLatestQoreVscPkgVersion();
             const currentVer = getInstalledQoreVscPkgVersion(context.extensionPath);
             const result = compareVersion(latestVer, currentVer);
-            if (result == undefined || result == 1) {
+            if (result === undefined || result == 1) {
                 // stop QLS if it's running
                 await qlsManager.stop();
 
@@ -223,7 +248,7 @@ function registerCommands(context: ExtensionContext) {
             return;
         }
 
-        doQLSLaunch(context, true, true);
+        doQLSLaunch(context.extensionPath, true, true);
     }));
 }
 
@@ -322,7 +347,10 @@ function pushDebugSubscriptions(context: ExtensionContext) {
 function getNoDebugExportApi() {
     const api = {
         getQoreExecutable(): string {
-            return qoreExecutable;
+            if (qoreLaunchCfg !== undefined) {
+                return qoreLaunchCfg.getQoreExec();
+            }
+            return "qore";
         }
     };
     return api;
@@ -334,7 +362,10 @@ function getExportApi() {
             return execDebugAdapterCommand(configuration, command);
         },
         getQoreExecutable(): string {
-            return qoreExecutable;
+            if (qoreLaunchCfg !== undefined) {
+                return qoreLaunchCfg.getQoreExec();
+            }
+            return "qore";
         },
         getExecutableArguments(configuration: DebugConfiguration): string[] {
             return getExecutableArguments(configuration);
@@ -363,11 +394,16 @@ export async function activate(context: ExtensionContext) {
     let useQLS = workspace.getConfiguration("qore").get("useQLS");
 
     // launch QLS
-    doQLSLaunch(context, useQLS, false);
+    doQLSLaunch(context.extensionPath, useQLS, false);
 
     // modify debugAdapter to "/qvscdbg-test" and executable to "bash" just in case the adapter silently won't start and check command it log
     debugAdapter = findScript(context.extensionPath, workspace.getConfiguration("qore").get("debugAdapter") || "qdbg-vsc-adapter");
-    let debuggerOk = checkDebuggerOk(qoreExecutable, debugAdapter);
+
+    // check if debugger can be launched succesfully
+    let debuggerOk: boolean = false;
+    if (qoreLaunchCfg) {
+        debuggerOk = checkDebuggerWithLaunchConfig(qoreLaunchCfg, debugAdapter);
+    }
     if (!debuggerOk) {
         msg.error(t`DebugAdapterNotFound '${debugAdapter}'`);
         return getNoDebugExportApi();
@@ -379,7 +415,7 @@ export async function activate(context: ExtensionContext) {
     return getExportApi();
 }
 
-// this method is called when your extension is deactivated
+// called when the extension is deactivated
 export function deactivate() {
     return qlsManager.stop();
 }
@@ -498,8 +534,15 @@ class QoreDebugAdapterDescriptorFactory implements DebugAdapterDescriptorFactory
         }
         msg.info(s);
         let args: string[] = getExecutableArguments(session.configuration);
-        console.log(qoreExecutable + " " + args.join(" "));
-        return new DebugAdapterExecutable(qoreExecutable, args);
+        if (qoreLaunchCfg !== undefined) {
+            return new DebugAdapterExecutable(
+                qoreLaunchCfg.getQoreExec(),
+                args,
+                qoreLaunchCfg.getLaunchOptions()
+            );
+        } else {
+            throw new Error("Qore environment is not setup properly. Cannot launch Qore debugger.");
+        }
     }
 }
 
@@ -516,7 +559,18 @@ export function execDebugAdapterCommand(configuration: DebugConfiguration, comma
     let args: string[] = getExecutableArguments(configuration);
     args.push("-X");
     args.push(command);
-    let results = spawnSync(qoreExecutable, args, {shell: true});
+
+    let results;
+    if (qoreLaunchCfg !== undefined) {
+        results = spawnSync(
+            qoreLaunchCfg.getQoreExec(),
+            args,
+            qoreLaunchCfg.getLaunchOptions()
+        );
+    } else {
+        throw new Error("Qore environment is not setup properly. Cannot launch Qore debugger.");
+    }
+
     if (results.status != 0) {
         throw new Error(results.stderr.toString());
     }

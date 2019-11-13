@@ -4,6 +4,7 @@ import { LanguageClient, ServerOptions } from 'vscode-languageclient';
 
 import { getClientOptions } from './clientOptions';
 import * as msg from './qore_message';
+import { QoreLaunchConfig } from './QoreLaunchConfig';
 import { getQoreVscPkgEnv, getQoreVscPkgQoreExecutable } from './qoreVscPkg';
 import { getServerArgs } from './serverArgs';
 import { getServerOptions } from './serverOptions';
@@ -43,20 +44,20 @@ export class QLSManager {
         msg.log(t`StartedLanguageClient`);
     }
 
-    start(extensionPath: string, qoreExecutable: string, serverOptions?: ServerOptions) {
-        if (serverOptions == undefined) {
-            msg.logPlusConsole(t`StartingQLSWithExe ${qoreExecutable}`);
+    start(extensionPath: string, qoreExec: string, serverOptions?: ServerOptions) {
+        if (serverOptions === undefined) {
             // language server command-line arguments
             const serverArgs = getServerArgs(extensionPath);
             const debugServerArgs = serverArgs;
 
             // language server options
             serverOptions = getServerOptions(
-                qoreExecutable,
+                qoreExec,
                 serverArgs,
                 debugServerArgs
             );
         }
+        msg.logPlusConsole(t`StartingQLSWithExe ${qoreExec}`);
 
         // options to control the language client
         const clientOptions = getClientOptions();
@@ -68,17 +69,38 @@ export class QLSManager {
 
     startWithQoreVscPkg(extensionPath: string) {
         msg.logPlusConsole(t`StartingQLSVscPkg`);
-        const qoreExecutable = getQoreVscPkgQoreExecutable(extensionPath);
+        const qoreExec = getQoreVscPkgQoreExecutable(extensionPath);
         const env = getQoreVscPkgEnv(extensionPath);
         const serverArgs = getServerArgs(extensionPath);
         const serverOptions = getServerOptions(
-            qoreExecutable,
+            qoreExec,
             serverArgs,
             serverArgs,
             { env: env }
         );
-        msg.logPlusConsole(t`StartingQLSWithExe ${qoreExecutable}`);
-        this.start(extensionPath, qoreExecutable, serverOptions);
+        this.start(extensionPath, qoreExec, serverOptions);
+    }
+
+    startWithLaunchConfig(extensionPath: string, config: QoreLaunchConfig) {
+        const qoreExec = config.getQoreExec();
+        const env = config.getLaunchEnv();
+        const serverArgs = getServerArgs(extensionPath);
+        let serverOptions;
+        if (env !== undefined) {
+            serverOptions = getServerOptions(
+                qoreExec,
+                serverArgs,
+                serverArgs,
+                { env: env }
+            );
+        } else {
+            serverOptions = getServerOptions(
+                qoreExec,
+                serverArgs,
+                serverArgs,
+            );
+        }
+        this.start(extensionPath, qoreExec, serverOptions);
     }
 
     async stop() {
@@ -89,7 +111,7 @@ export class QLSManager {
         this._stoppingQLS = true;
 
         // return if not running
-        if (!this._startedQLS || this._languageClient == undefined) {
+        if (!this._startedQLS || this._languageClient === undefined) {
             msg.logPlusConsole(t`QLSAlreadyStopped`);
             this._stoppingQLS = false;
             return;
@@ -117,10 +139,10 @@ export class QLSManager {
     }
 
     sendRequest(method: string, params: any, token?: CancellationToken | undefined) {
-        if (this._languageClient == undefined) {
+        if (this._languageClient === undefined) {
             return Promise.resolve(null);
         }
-        if (token != undefined) {
+        if (token !== undefined) {
             return this._languageClient.sendRequest(method, params, token);
         } else {
             return this._languageClient.sendRequest(method, params);
