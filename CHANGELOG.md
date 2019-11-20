@@ -5,6 +5,7 @@
 * Big refactoring.
 * Fixed debugging when using Qore VSCode package for Windows.
 * QLS is more robust now with added validation steps.
+* Vulnerability fix in https-proxy-agent npm package.
 
 ## 0.4.3
 

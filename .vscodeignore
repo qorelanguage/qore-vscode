@@ -1,7 +1,9 @@
 **/*.ts
 **/tsconfig.json
+**/tslint.json
 **/test/*
 **/.git
 **/.git/*
 **/.gitignore
 **/.gitmodules
+**/.vscode
