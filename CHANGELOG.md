@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0
+
+* Big refactoring.
+* Fixed debugging when using Qore VSCode package for Windows.
+* QLS is more robust now with added validation steps.
+
 ## 0.4.3
 
 * Fixed internal parameter name in QLS.
