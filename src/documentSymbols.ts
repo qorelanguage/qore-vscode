@@ -1,5 +1,5 @@
 import { QLSManager } from './QLSManager';
-import { Uri, DocumentSymbol } from 'vscode';
+import { Uri } from 'vscode';
 
 export interface QoreTextDocument {
     uri: string | Uri;
