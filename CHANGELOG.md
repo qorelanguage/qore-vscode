@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.1
+
+* Make getDocumentSymbols exported API available even when debugging is unavailable.
+* Correctly handle non-string URIs in getDocumentSymbols call parameters.
+
 ## 0.5.0
 
 * Big refactoring.

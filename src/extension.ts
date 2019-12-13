@@ -351,6 +351,13 @@ function getNoDebugExportApi() {
                 return qoreLaunchCfg.getQoreExec();
             }
             return "qore";
+        },
+        async getDocumentSymbols(doc: QoreTextDocument, retType?: string): Promise<any> {
+            let n = 100;
+            while (!qlsManager.languageClientReady() && --n) {
+                await new Promise(resolve => setTimeout(resolve, 200));
+            }
+            return getDocumentSymbolsImpl(qlsManager, doc, retType);
         }
     };
     return api;
