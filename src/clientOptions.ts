@@ -25,7 +25,8 @@ export function getClientOptions(): LanguageClientOptions {
                 workspace.createFileSystemWatcher('**/*.qstep'),
                 workspace.createFileSystemWatcher('**/*.qclass'),
                 workspace.createFileSystemWatcher('**/*.qconst'),
-                workspace.createFileSystemWatcher('**/*.qsm')
+                workspace.createFileSystemWatcher('**/*.qsm'),
+                workspace.createFileSystemWatcher('**/*.qmc')
             ]
         }
     };
