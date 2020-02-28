@@ -2,23 +2,23 @@ import { spawnSync } from 'child_process';
 import { QoreLaunchConfig } from './QoreLaunchConfig';
 
 //! check that executable is working
-export function checkExecOkResults(exec: string, args: string[] | undefined, launchOptions: any) {
-    const results = spawnSync(
+export function checkExecOkResult(exec: string, args: string[] | undefined, launchOptions: any) {
+    const result = spawnSync(
         exec,
         args,
         launchOptions
     );
-    return results;
+    return result;
 }
 
 //! check that executable is working
 export function checkExecOk(exec: string, args: string[] | undefined, launchOptions: any, expectedStatus: number): boolean {
-    const results = checkExecOkResults(
+    const result = checkExecOkResult(
         exec,
         args,
         launchOptions
     );
-    if (results.status == expectedStatus) {
+    if (result.status == expectedStatus) {
         return true;
     }
     return false;
@@ -33,18 +33,23 @@ export function checkQoreOk(qoreExec: string, launchOptions?): boolean {
     }
 
     console.log("Checking Qore executable: " + qoreExec);
-    let result = checkExecOk(
+    const result = checkExecOkResult(
         qoreExec,
         ["-l astparser -l json -ne \"int x = 1; x++;\""],
-        launchOptions,
-        0
+        launchOptions
     );
-    if (result) {
+    if (result.status == 0) {
         console.log("Qore executable ok: " + qoreExec);
+        return true;
     } else {
         console.log("Qore executable check failed: " + qoreExec);
+        if (result.hasOwnProperty('stderr')) {
+            console.log("Stdout: " + result.stdout.toString());
+            console.log("Stderr: " + result.stderr.toString());
+        }
+        console.log("Launch opts: ", launchOptions);
+        return false;
     }
-    return result;
 }
 
 //! check that QoreLaunchConfig is working
@@ -60,22 +65,22 @@ export function checkDebuggerWithLaunchConfig(config: QoreLaunchConfig, dbg: str
     const launchOptions = config.getLaunchOptions();
     console.log("Checking Qore debugger with Qore executable: " + qoreExec);
 
-    let result: boolean = false;
-    let results = checkExecOkResults(
+    let res: boolean = false;
+    const result = checkExecOkResult(
         qoreExec,
         [dbg, "-h"],
         launchOptions
     );
-    if (results.status == 0) {
-        result = true;
-    } else if (results.status == 1 && /(usage|debug server)/.test(results.stdout.toString())) {
-        result = true;
+    if (result.status == 0) {
+        res = true;
+    } else if (result.status == 1 && /(usage|debug server)/.test(result.stdout.toString())) {
+        res = true;
     }
 
-    if (result) {
+    if (res) {
         console.log("Qore debugger ok");
     } else {
         console.log("Qore debugger check failed");
     }
-    return result;
+    return res;
 }
