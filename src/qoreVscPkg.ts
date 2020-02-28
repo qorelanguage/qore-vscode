@@ -3,7 +3,6 @@ import {
     existsSync,
     readFileSync,
     removeSync,
-    renameSync,
     writeFileSync
 } from 'fs-extra';
 import { platform } from 'os';
@@ -13,9 +12,10 @@ import * as msg from './qore_message';
 import { downloadFile } from './utils';
 
 let installInProgress: boolean = false;
+const PathSep = ':';
 
 export function getLatestQoreVscPkgVersion(): string {
-    return "0.9.0";
+    return "0.9.4";
 }
 
 //! get path to Qore VSCode package dir
@@ -51,11 +51,10 @@ export function isQoreVscPkgInstalled(extensionPath: string): boolean {
 export function getQoreVscPkgModuleDirVar(extensionPath: string): string {
     const version = getLatestQoreVscPkgVersion();
     const pkgPath = getQoreVscPkgPath(extensionPath);
-    const sep = (platform() == "win32") ? ";" : ":";
     let qoreModuleDir = "";
-    qoreModuleDir += join(pkgPath, "lib", "qore-modules") + sep;
-    qoreModuleDir += join(pkgPath, "lib", "qore-modules", version) + sep;
-    qoreModuleDir += join(pkgPath, "share", "qore-modules") + sep;
+    qoreModuleDir += join(pkgPath, "lib", "qore-modules") + PathSep;
+    qoreModuleDir += join(pkgPath, "lib", "qore-modules", version) + PathSep;
+    qoreModuleDir += join(pkgPath, "share", "qore-modules") + PathSep;
     qoreModuleDir += join(pkgPath, "share", "qore-modules", version);
     return qoreModuleDir;
 }
@@ -87,8 +86,23 @@ export function getInstalledQoreVscPkgVersion(extensionPath: string): string | u
     return verString;
 }
 
+function _removeQoreVscPkg(extensionPath: string): boolean {
+    // remove old package if it is present
+    const oldPkgPath = getQoreVscPkgPath(extensionPath);
+    if (existsSync(oldPkgPath)) {
+        try {
+            removeSync(oldPkgPath);
+        }
+        catch (err) {
+            msg.logPlusConsole("Failed removing previously installed package" + String(err));
+            return false;
+        }
+    }
+    return true;
+}
+
 //! internal install function for Qore VSCode package
-function _installQoreVscPkg(extensionPath: string, version: string, archive: string, extractedName: string, targetDir: string, onSuccess, onError) {
+function _installQoreVscPkg(extensionPath: string, version: string, archive: string, targetDir: string, onSuccess, onError) {
     const archivePath = extensionPath + "/" + archive;
 
     // unzip archive
@@ -99,26 +113,13 @@ function _installQoreVscPkg(extensionPath: string, version: string, archive: str
             onError(message);
             return;
         }
-
         msg.logPlusConsole(t`ExtractedQoreVscPkg`);
-        // now rename the extracted dir
-        try {
-            renameSync(
-                join(targetDir, extractedName),
-                join(targetDir, "qore")
-            );
-        }
-        catch (e) {
-            const message = t`FailedRenameQoreVscPkg`;
-            msg.logPlusConsole(message + ': ' + e);
-            onError(message);
-            return;
-        }
+
+        // write version file
         writeFileSync(
             join(getQoreVscPkgVersionPath(extensionPath)),
             version
         );
-        msg.logPlusConsole(t`QoreVscPkgInstallOk`);
         onSuccess();
     });
 }
@@ -132,14 +133,13 @@ export function installQoreVscPkg(extensionPath: string, onSuccess, onError) {
     installInProgress = true;
 
     const version = getLatestQoreVscPkgVersion();
-    const archive = "qore-" + version + "-git.zip";
-    const extractedName = "qore-" + version + "-git";
-    const uri = "https://github.com/qorelanguage/qore-vscode/releases/download/v0.3.0/" + archive;
+    const archive = "qore-" + version + "-windows.zip";
+    const uri = "https://github.com/qorelanguage/qore/releases/download/release-" + version + "/" + archive;
     const filePath = extensionPath + "/" + archive;
 
     const onInstallSuccess = function() {
         installInProgress = false;
-        msg.info(t`InstalledQoreVscPkg`);
+        msg.info(t`QoreVscPkgInstallSuccess`);
         onSuccess();
     };
     const onInstallError = function(err) {
@@ -149,14 +149,18 @@ export function installQoreVscPkg(extensionPath: string, onSuccess, onError) {
     };
 
     const onDownloadSuccess = function() {
-        msg.info(t`DloadedQoreVscPkg`);
+        msg.info(t`RemovingOldQoreVscPkg`);
+        if (! _removeQoreVscPkg(extensionPath)) {
+            onInstallError(t`FailedRemoveOldQoreVscPkg`);
+            return;
+        }
+
         msg.info(t`InstallingQoreVscPkg`);
         _installQoreVscPkg(
             extensionPath,
             version,
             archive,
-            extractedName,
-            extensionPath,
+            join(extensionPath, "qore"),
             onInstallSuccess,
             onInstallError
         );
@@ -166,17 +170,6 @@ export function installQoreVscPkg(extensionPath: string, onSuccess, onError) {
         msg.error(t`FailedDownloadQoreVscPkg` + ": " + err);
         onError(err);
     };
-
-    // remove old package if it is present
-    const pkgPath = getQoreVscPkgPath(extensionPath);
-    if (existsSync(pkgPath)) {
-        try {
-            removeSync(pkgPath);
-        }
-        catch (err) {
-            msg.logPlusConsole("Failed removing previously installed package" + String(err));
-        }
-    }
 
     msg.info(t`DloadingQoreVscPkg`);
     downloadFile(uri, filePath, onDownloadSuccess, onDownloadError);

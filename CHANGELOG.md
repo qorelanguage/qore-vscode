@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.3
+
+* Updated Windows Qore VSCode Package version to 0.9.4.
+
+## 0.5.2
+
+* Added `.qmc` as a Qore file extension.
+
 ## 0.5.1
 
 * Make getDocumentSymbols exported API available even when debugging is unavailable.
