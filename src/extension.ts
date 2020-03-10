@@ -412,7 +412,7 @@ export async function activate(context: ExtensionContext) {
         debuggerOk = checkDebuggerWithLaunchConfig(qoreLaunchCfg, debugAdapter);
     }
     if (!debuggerOk) {
-        msg.error(t`DebugAdapterNotFound '${debugAdapter}'`);
+        msg.logPlusConsole(t`DebugAdapterNotFound '${debugAdapter}'`);
         return getNoDebugExportApi();
     }
 
