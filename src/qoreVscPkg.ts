@@ -22,7 +22,7 @@ export function plaformHasQoreVscPkg(): boolean {
 }
 
 export function getLatestQoreVscPkgVersion(): string {
-    return '0.9.4';
+    return '0.9.4.1';
 }
 
 //! get path to Qore VSCode package dir
