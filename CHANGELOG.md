@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.0
+
+* Internal updates to installation of Qore VSCode Package.
+* Added Qore VSCode Package for Mac OS X.
+* Updated Qore VSCode Package version to 0.9.4.1.
+* Made "debug adapter not found" show up in log only, instead of as an error notification.
+
 ## 0.5.3
 
 * Updated Windows Qore VSCode Package version to 0.9.4.
