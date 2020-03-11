@@ -34,7 +34,8 @@ import {
     getQoreVscPkgEnv,
     getQoreVscPkgQoreExecutable,
     installQoreVscPkg,
-    isQoreVscPkgInstalled
+    isQoreVscPkgInstalled,
+    plaformHasQoreVscPkg
 } from './qoreVscPkg';
 import * as msg from './qore_message';
 import { compareVersion, findScript, openInBrowser } from './utils';
@@ -184,57 +185,65 @@ function doQLSLaunch(extensionPath: string, useQLS, launchOnly: boolean) {
         qlsManager.startWithLaunchConfig(extensionPath, qoreLaunchCfg);
     }
     else if (!launchOnly) {
-        if (platform() == "win32") { // offer installing Qore VSCode package
+        if (plaformHasQoreVscPkg()) { // offer installing Qore VSCode package
             qoreVscPkgInstallation(extensionPath);
         }
         else {
             msg.warning(t`QoreAndModulesNotFound`);
-            openInBrowser("https://github.com/qorelanguage/qore-vscode/wiki/Visual-Code-for-Qore-Language-Setup");
+            openInBrowser('https://github.com/qorelanguage/qore-vscode/wiki/Visual-Code-for-Qore-Language-Setup');
         }
     }
 }
 
 function registerCommands(context: ExtensionContext) {
-    if (platform() == "win32") {
-        // install Qore VSCode package command
-        // only installs if it is not installed yet, otherwise shows a warning
-        context.subscriptions.push(commands.registerCommand('qore-vscode.installQoreVscPkg', async _config => {
-            if (isQoreVscPkgInstalled(context.extensionPath)) {
-                msg.warning(t`QoreVscPkgAlreadyInstalled`);
-                return;
-            }
+    // install Qore VSCode package command
+    // only installs if it is not installed yet, otherwise shows a warning
+    context.subscriptions.push(commands.registerCommand('qore-vscode.installQoreVscPkg', async _config => {
+        if (!plaformHasQoreVscPkg()) {
+            return;
+        }
+        if (isQoreVscPkgInstalled(context.extensionPath)) {
+            msg.warning(t`QoreVscPkgAlreadyInstalled`);
+            return;
+        }
 
+        // stop QLS if it's running
+        await qlsManager.stop();
+
+        installQoreVscPkg(context.extensionPath, () => {}, () => {});
+    }));
+
+    // reinstall Qore VSCode package command
+    context.subscriptions.push(commands.registerCommand('qore-vscode.reinstallQoreVscPkg', async _config => {
+        if (!plaformHasQoreVscPkg()) {
+            return;
+        }
+
+        // stop QLS if it's running
+        await qlsManager.stop();
+
+        installQoreVscPkg(context.extensionPath, () => {}, () => {});
+    }));
+
+    // update Qore VSCode package command
+    // updates if installed version is lower than latest
+    context.subscriptions.push(commands.registerCommand('qore-vscode.updateQoreVscPkg', async _config => {
+        if (!plaformHasQoreVscPkg()) {
+            return;
+        }
+        const latestVer = getLatestQoreVscPkgVersion();
+        const currentVer = getInstalledQoreVscPkgVersion(context.extensionPath);
+        const result = compareVersion(latestVer, currentVer);
+        if (result === undefined || result == 1) {
             // stop QLS if it's running
             await qlsManager.stop();
 
             installQoreVscPkg(context.extensionPath, () => {}, () => {});
-        }));
-
-        // reinstall Qore VSCode package command
-        context.subscriptions.push(commands.registerCommand('qore-vscode.reinstallQoreVscPkg', async _config => {
-            // stop QLS if it's running
-            await qlsManager.stop();
-
-            installQoreVscPkg(context.extensionPath, () => {}, () => {});
-        }));
-
-        // update Qore VSCode package command
-        // updates if installed version is lower than latest
-        context.subscriptions.push(commands.registerCommand('qore-vscode.updateQoreVscPkg', async _config => {
-            const latestVer = getLatestQoreVscPkgVersion();
-            const currentVer = getInstalledQoreVscPkgVersion(context.extensionPath);
-            const result = compareVersion(latestVer, currentVer);
-            if (result === undefined || result == 1) {
-                // stop QLS if it's running
-                await qlsManager.stop();
-
-                installQoreVscPkg(context.extensionPath, () => {}, () => {});
-            }
-            else {
-                msg.info(t`LatestQoreVscPkgInstalled`);
-            }
-        }));
-    }
+        }
+        else {
+            msg.info(t`LatestQoreVscPkgInstalled`);
+        }
+    }));
 
     // stop QLS command
     context.subscriptions.push(commands.registerCommand('qore-vscode.stopQLS', _config => {

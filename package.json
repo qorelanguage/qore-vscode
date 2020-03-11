@@ -384,12 +384,13 @@
         "vscode-debugadapter-testsupport": "^1.24.0"
     },
     "dependencies": {
-        "gettext-parser": "^2.0.0",
-        "ttag": "^1.4.0",
         "extract-zip": "^1.6.7",
         "fs-extra": "^8.1.0",
-        "vscode-languageclient": "^5.1.1",
+        "gettext-parser": "^2.0.0",
+        "sudo-prompt": "^9.1.1",
+        "ttag": "^1.4.0",
+        "vscode-debugadapter": "^1.24.0",
         "vscode-debugprotocol": "^1.24.0",
-        "vscode-debugadapter": "^1.24.0"
+        "vscode-languageclient": "^5.1.1"
     }
 }

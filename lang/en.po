@@ -64,6 +64,9 @@ msgstr "Failed downloading Qore VSCode package."
 msgid "FailedExtractionQoreVscPkg"
 msgstr "Failed extracting Qore VSCode package."
 
+msgid "FailedMoveOptQoreVscPkg"
+msgstr "Failed moving the Qore VSCode package to /opt directory"
+
 msgid "FailedRemoveOldQoreVscPkg"
 msgstr "Failed removing old Qore VSCode package."
 
