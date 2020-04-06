@@ -149,57 +149,57 @@ async function _removeOldQoreVscPkg(extensionPath: string): Promise<boolean> {
     return _removeExtDirQoreVscPkg(extensionPath);
 }
 
-function _installMacQoreVscPkg(extensionPath: string, version: string, archive: string, onSuccess, onError) {
+async function _installMacQoreVscPkg(extensionPath: string, version: string, archive: string, onSuccess, onError) {
     const archivePath = join(extensionPath, archive);
 
     // unzip archive
-    extract(archivePath, {dir: extensionPath}, err => {
-        if (err) {
-            const message = t`FailedExtractionQoreVscPkg`;
-            msg.logPlusConsole(message + ': ' + err);
-            onError(message);
-            return;
-        }
-        msg.logPlusConsole(t`ExtractedQoreVscPkg`);
+    try {
+        await extract(archivePath, {dir: extensionPath});
+    } catch (err) {
+        const message = t`FailedExtractionQoreVscPkg`;
+        msg.logPlusConsole(message + ': ' + err);
+        onError(message);
+        return;
+    }
+    msg.logPlusConsole(t`ExtractedQoreVscPkg`);
 
-        // write version file
-        writeFileSync(join(extensionPath, 'qore', VersionFile), version);
+    // write version file
+    writeFileSync(join(extensionPath, 'qore', VersionFile), version);
 
-        // move the qore package to /opt
-        sudo.exec('mv ' + join(extensionPath, 'qore') + ' /opt/', { name: 'Qore VS Code' },
-            function(error, _stdout, stderr) {
-                if (error) {
-                    const message = t`FailedMoveOptQoreVscPkg`;
-                    msg.logPlusConsole(message + ': ' + error);
-                    msg.logPlusConsole('stderr: ' + stderr);
-                    onError(message);
-                    return;
-                }
-                onSuccess();
+    // move the qore package to /opt
+    sudo.exec('mv ' + join(extensionPath, 'qore') + ' /opt/', { name: 'Qore VS Code' },
+        function(error, _stdout, stderr) {
+            if (error) {
+                const message = t`FailedMoveOptQoreVscPkg`;
+                msg.logPlusConsole(message + ': ' + error);
+                msg.logPlusConsole('stderr: ' + stderr);
+                onError(message);
+                return;
             }
-        );
-    });
+            onSuccess();
+        }
+    );
 }
 
 //! internal install function for Qore VSCode package
-function _installQoreVscPkg(extensionPath: string, version: string, archive: string, onSuccess, onError) {
+async function _installQoreVscPkg(extensionPath: string, version: string, archive: string, onSuccess, onError) {
     const archivePath = join(extensionPath, archive);
 
     // unzip archive
-    extract(archivePath, {dir: join(extensionPath, 'qore')}, err => {
-        if (err) {
-            const message = t`FailedExtractionQoreVscPkg`;
-            msg.logPlusConsole(message + ': ' + err);
-            onError(message);
-            return;
-        }
-        msg.logPlusConsole(t`ExtractedQoreVscPkg`);
+    try {
+        await extract(archivePath, {dir: join(extensionPath, 'qore')});
+    } catch (err) {
+        const message = t`FailedExtractionQoreVscPkg`;
+        msg.logPlusConsole(message + ': ' + err);
+        onError(message);
+        return;
+    }
+    msg.logPlusConsole(t`ExtractedQoreVscPkg`);
 
-        // write version file
-        writeFileSync(join(getQoreVscPkgVersionPath(extensionPath)), version);
+    // write version file
+    writeFileSync(join(getQoreVscPkgVersionPath(extensionPath)), version);
 
-        onSuccess();
-    });
+    onSuccess();
 }
 
 //! download and install Qore VSCode package

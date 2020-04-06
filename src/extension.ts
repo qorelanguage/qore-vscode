@@ -1,7 +1,6 @@
 import { spawnSync } from 'child_process';
 import { existsSync, readFileSync } from 'fs-extra';
 import * as gettext_parser from 'gettext-parser';
-import { platform } from 'os';
 import { join } from 'path';
 import { t, addLocale, useLocale } from 'ttag';
 import {

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.0
+
+* Updated NPM packages to newer versions.
+* Internal changes.
+
 ## 0.6.0
 
 * Internal updates to installation of Qore VSCode Package.

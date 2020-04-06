@@ -2,7 +2,7 @@
     "name": "qore-vscode",
     "displayName": "Qore",
     "description": "Qore language support for VS Code",
-    "version": "0.6.0",
+    "version": "0.7.0",
     "publisher": "qoretechnologies",
     "author": {
         "name": "Qore Technologies",
@@ -371,11 +371,11 @@
     },
     "devDependencies": {
         "@types/glob": "^7.1.1",
-        "@types/mocha": "^5.2.6",
+        "@types/mocha": "^7.0.2",
         "@types/node": "^8.10.25",
         "@types/vscode": "^1.35.0",
         "glob": "^7.1.4",
-        "mocha": "^6.1.4",
+        "mocha": "^7.1.1",
         "source-map-support": "^0.5.12",
         "tslint": "^5.16.0",
         "typescript": "^3.5.2",
@@ -384,11 +384,11 @@
         "vscode-debugadapter-testsupport": "^1.24.0"
     },
     "dependencies": {
-        "extract-zip": "^1.6.7",
-        "fs-extra": "^8.1.0",
-        "gettext-parser": "^2.0.0",
+        "extract-zip": "^2.0.0",
+        "fs-extra": "^9.0.0",
+        "gettext-parser": "^4.0.3",
         "sudo-prompt": "^9.1.1",
-        "ttag": "^1.4.0",
+        "ttag": "^1.7.0",
         "vscode-debugadapter": "^1.24.0",
         "vscode-debugprotocol": "^1.24.0",
         "vscode-languageclient": "^5.1.1"
