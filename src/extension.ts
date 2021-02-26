@@ -406,7 +406,7 @@ function getExportApi() {
                 await new Promise(resolve => setTimeout(resolve, interval));
             }
             return getDocumentSymbolsImpl(qlsManager, doc, retType);
-        }
+        },
 
         async isLangClientAvailable(timeout: number = 8000): Promise<boolean> {
             const interval = 200;
