@@ -2,7 +2,7 @@
     "name": "qore-vscode",
     "displayName": "Qore",
     "description": "Qore language support for VS Code",
-    "version": "0.7.0",
+    "version": "0.7.1",
     "publisher": "qoretechnologies",
     "author": {
         "name": "Qore Technologies",
@@ -379,9 +379,9 @@
         "source-map-support": "^0.5.12",
         "tslint": "^5.16.0",
         "typescript": "^3.5.2",
-        "vscode-test": "^1.0.0",
         "vsce": "^1.65.0",
-        "vscode-debugadapter-testsupport": "^1.24.0"
+        "vscode-debugadapter-testsupport": "^1.24.0",
+        "vscode-test": "^1.0.0"
     },
     "dependencies": {
         "extract-zip": "^2.0.0",

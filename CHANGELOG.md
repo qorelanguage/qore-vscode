@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.1
+
+* Added isLangClientAvailable() to the API.
+* Added the timeout argument to the API function getDocumentSymbols() - it is no longer fixed.
+
 ## 0.7.0
 
 * Updated NPM packages to newer versions.

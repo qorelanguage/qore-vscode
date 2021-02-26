@@ -360,12 +360,23 @@ function getNoDebugExportApi() {
             }
             return "qore";
         },
-        async getDocumentSymbols(doc: QoreTextDocument, retType?: string): Promise<any> {
-            let n = 100;
+
+        async getDocumentSymbols(doc: QoreTextDocument, retType: string = 'symbols', timeout: number = 8000): Promise<any> {
+            const interval = 200;
+            let n = Math.ceil(Math.max(timeout, 0) / interval);
             while (!qlsManager.languageClientReady() && --n) {
-                await new Promise(resolve => setTimeout(resolve, 200));
+                await new Promise(resolve => setTimeout(resolve, interval));
             }
             return getDocumentSymbolsImpl(qlsManager, doc, retType);
+        },
+
+        async isLangClientAvailable(timeout: number = 8000): Promise<boolean> {
+            const interval = 200;
+            let n = Math.ceil(Math.max(timeout, 0) / interval);
+            while (!qlsManager.languageClientReady() && --n) {
+                await new Promise(resolve => setTimeout(resolve, interval));
+            }
+            return Promise.resolve(!!n);
         }
     };
     return api;
@@ -376,19 +387,23 @@ function getExportApi() {
         execDebugAdapterCommand(configuration: DebugConfiguration, command: string): any {
             return execDebugAdapterCommand(configuration, command);
         },
+
         getQoreExecutable(): string {
             if (qoreLaunchCfg !== undefined) {
                 return qoreLaunchCfg.getQoreExec();
             }
             return "qore";
         },
+
         getExecutableArguments(configuration: DebugConfiguration): string[] {
             return getExecutableArguments(configuration);
         },
-        async getDocumentSymbols(doc: QoreTextDocument, retType?: string): Promise<any> {
-            let n = 100;
+
+        async getDocumentSymbols(doc: QoreTextDocument, retType: string = 'symbols', timeout: number = 8000): Promise<any> {
+            const interval = 200;
+            let n = Math.ceil(Math.max(timeout, 0) / interval);
             while (!qlsManager.languageClientReady() && --n) {
-                await new Promise(resolve => setTimeout(resolve, 200));
+                await new Promise(resolve => setTimeout(resolve, interval));
             }
             return getDocumentSymbolsImpl(qlsManager, doc, retType);
         }
