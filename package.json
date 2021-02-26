@@ -2,7 +2,7 @@
     "name": "qore-vscode",
     "displayName": "Qore",
     "description": "Qore language support for VS Code",
-    "version": "0.7.1",
+    "version": "0.7.2",
     "publisher": "qoretechnologies",
     "author": {
         "name": "Qore Technologies",

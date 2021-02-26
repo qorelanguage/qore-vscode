@@ -407,6 +407,15 @@ function getExportApi() {
             }
             return getDocumentSymbolsImpl(qlsManager, doc, retType);
         }
+
+        async isLangClientAvailable(timeout: number = 8000): Promise<boolean> {
+            const interval = 200;
+            let n = Math.ceil(Math.max(timeout, 0) / interval);
+            while (!qlsManager.languageClientReady() && --n) {
+                await new Promise(resolve => setTimeout(resolve, interval));
+            }
+            return Promise.resolve(!!n);
+        }
     };
     return api;
 }
