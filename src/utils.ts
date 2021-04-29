@@ -1,6 +1,7 @@
 import { execSync } from 'child_process';
 import { createWriteStream, existsSync, unlink } from 'fs-extra';
 import { delimiter, isAbsolute, join } from 'path';
+import * as msg from './qore_message';
 
 export function compareVersion(v1, v2) {
     if ((typeof v1 !== 'string') || (typeof v2 !== 'string')) {
@@ -69,7 +70,7 @@ export function openInBrowser(url: string) {
         execSync(command);
     }
     catch (e) {
-        console.log(e);
+        msg.logPlusConsole(e);
     }
 }
 
@@ -82,7 +83,7 @@ export function downloadFile(uri: string, dest: string, onSuccess, onError) {
     let file = createWriteStream(dest);
 
     let localOnError = function(error) {
-        console.log("error: " + error);
+        msg.logPlusConsole("error: " + error);
         unlink(dest, err => { onError(err); }); // Delete the file async. (But we don't check the result)
         onError(error);
     };
@@ -91,7 +92,7 @@ export function downloadFile(uri: string, dest: string, onSuccess, onError) {
         if (response.statusCode >= 200 && response.statusCode < 300) {
             file.on('error', localOnError);
             file.on('finish', function() {
-                //console.log("Download success");
+                //msg.logPlusConsole("Download success");
                 file.end();  // close() is async, call cb after close completes.
                 onSuccess();
             });

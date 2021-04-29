@@ -1,5 +1,6 @@
 import { ServerOptions } from 'vscode-languageclient';
 import { spawn, ChildProcess } from 'child_process';
+import * as msg from './qore_message';
 
 //! language server options
 export function getServerOptions(qoreExecutable: string, serverArgs, debugServerArgs, launchOptions?): ServerOptions {
@@ -20,10 +21,10 @@ export function getServerOptions(qoreExecutable: string, serverArgs, debugServer
                     launchOptions
                 );
                 childProcess.stderr.on('data', data => {
-                    console.log(`stderr: ${data}`);
+                    msg.logPlusConsole(`stderr: ${data}`);
                 });
                 childProcess.stdout.on('data', data => {
-                    console.log(`stdout: ${data}`);
+                    msg.logPlusConsole(`stdout: ${data}`);
                 });
                 return childProcess; // uses stdin/stdout for communication
             }

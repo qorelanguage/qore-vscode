@@ -1,3 +1,4 @@
+
 export class QoreLaunchConfig {
     //! qore executable
     private _qoreExec: string = "qore";

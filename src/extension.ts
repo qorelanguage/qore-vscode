@@ -273,12 +273,12 @@ function pushDebugSubscriptions(context: ExtensionContext) {
                 if (!input) {
                     return;
                 }
-                console.log("Got input in qore-vscode.getFilename command: " + input);
+                msg.logPlusConsole("Got input in qore-vscode.getFilename command: " + input);
                 // ignored for now
                 // TODO tmandys has to explain why the input is ignored here
             },
             err => {
-                console.log(err);
+                msg.logPlusConsole(err);
             }
         );
     }));
@@ -296,7 +296,7 @@ function pushDebugSubscriptions(context: ExtensionContext) {
                 return conn;
             },
             err => {
-                console.log(err);
+                msg.logPlusConsole(err);
             }
         );
     }));
@@ -317,12 +317,12 @@ function pushDebugSubscriptions(context: ExtensionContext) {
                 if (!input) {
                     return;
                 }
-                console.log("Got input in qore-vscode.getProgram command: " + input);
+                msg.logPlusConsole("Got input in qore-vscode.getProgram command: " + input);
                 // ignored for now
                 // TODO tmandys has to explain why the input is ignored here
             },
             err => {
-                console.log(err);
+                msg.logPlusConsole(err);
             }
         );
     }));
@@ -424,7 +424,7 @@ export async function activate(context: ExtensionContext) {
     // "Converting circular structure to JSON" when using JSON.stringify()
     // util.inspect() is proposed fix but it has another issue so limit depth
     //let util = require('util');
-    //console.log("QoreConfigurationProvider(context: "+ util.inspect(context, {depth: 1}));
+    //msg.logPlusConsole("QoreConfigurationProvider(context: "+ util.inspect(context, {depth: 1}));
 
     // register user commands for Qore and QLS
     registerCommands(context);

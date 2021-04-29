@@ -1,5 +1,6 @@
 import { spawnSync } from 'child_process';
 import { QoreLaunchConfig } from './QoreLaunchConfig';
+import * as msg from './qore_message';
 
 //! check that executable is working
 export function checkExecOkResult(exec: string, args: string[] | undefined, launchOptions: any) {
@@ -32,22 +33,22 @@ export function checkQoreOk(qoreExec: string, launchOptions?): boolean {
         launchOptions.shell = true;
     }
 
-    console.log("Checking Qore executable: " + qoreExec);
+    msg.logPlusConsole("Checking Qore executable: " + qoreExec);
     const result = checkExecOkResult(
         qoreExec,
         ["-l astparser -l json -ne \"int x = 1; x++;\""],
         launchOptions
     );
     if (result.status == 0) {
-        console.log("Qore executable ok: " + qoreExec);
+        msg.logPlusConsole("Qore executable ok: " + qoreExec);
         return true;
     } else {
-        console.log("Qore executable check failed: " + qoreExec);
+        msg.logPlusConsole("Qore executable check failed: " + qoreExec);
         if (result.hasOwnProperty('stderr')) {
-            console.log("Stdout: " + result.stdout.toString());
-            console.log("Stderr: " + result.stderr.toString());
+            msg.logPlusConsole("Stdout: " + result.stdout.toString());
+            msg.logPlusConsole("Stderr: " + result.stderr.toString());
         }
-        console.log("Launch opts: ", launchOptions);
+        msg.logPlusConsole("Launch opts: ", launchOptions);
         return false;
     }
 }
@@ -63,7 +64,7 @@ export function checkQoreLaunchConfig(config: QoreLaunchConfig): boolean {
 export function checkDebuggerWithLaunchConfig(config: QoreLaunchConfig, dbg: string): boolean {
     const qoreExec = config.getQoreExec();
     const launchOptions = config.getLaunchOptions();
-    console.log("Checking Qore debugger with Qore executable: " + qoreExec);
+    msg.logPlusConsole("Checking Qore debugger with Qore executable: " + qoreExec + " dbg: " + dbg);
 
     let res: boolean = false;
     const result = checkExecOkResult(
@@ -78,9 +79,9 @@ export function checkDebuggerWithLaunchConfig(config: QoreLaunchConfig, dbg: str
     }
 
     if (res) {
-        console.log("Qore debugger ok");
+        msg.logPlusConsole("Qore debugger ok");
     } else {
-        console.log("Qore debugger check failed");
+        msg.logPlusConsole("Qore debugger check failed");
     }
     return res;
 }
