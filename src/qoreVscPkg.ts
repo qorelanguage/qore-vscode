@@ -6,7 +6,7 @@ import {
     writeFileSync
 } from 'fs-extra';
 import { platform } from 'os';
-import { join } from 'path';
+import { join, delimiter } from 'path';
 import * as sudo from 'sudo-prompt';
 import { t } from 'ttag';
 import * as msg from './qore_message';
@@ -14,7 +14,6 @@ import { downloadFile } from './utils';
 
 let installInProgress: boolean = false;
 
-const PathSep = ':';
 const VersionFile = 'pkg-ver.txt';
 
 export function plaformHasQoreVscPkg(): boolean {
@@ -62,9 +61,9 @@ export function getQoreVscPkgModuleDirVar(extensionPath: string): string {
     const version = getLatestQoreVscPkgVersion();
     const pkgPath = getQoreVscPkgPath(extensionPath);
     let qoreModuleDir = '';
-    qoreModuleDir += join(pkgPath, 'lib', 'qore-modules') + PathSep;
-    qoreModuleDir += join(pkgPath, 'lib', 'qore-modules', version) + PathSep;
-    qoreModuleDir += join(pkgPath, 'share', 'qore-modules') + PathSep;
+    qoreModuleDir += join(pkgPath, 'lib', 'qore-modules') + delimiter;
+    qoreModuleDir += join(pkgPath, 'lib', 'qore-modules', version) + delimiter;
+    qoreModuleDir += join(pkgPath, 'share', 'qore-modules') + delimiter;
     qoreModuleDir += join(pkgPath, 'share', 'qore-modules', version);
     return qoreModuleDir;
 }
@@ -80,7 +79,7 @@ export function getQoreVscPkgLdLibPathVar(extensionPath: string): string {
 //! get env var settings for using Qore VSCode package
 export function getQoreVscPkgEnv(extensionPath: string): object {
     const env = {
-        PATH: process.env.PATH,
+        PATH: process.env.PATH + delimiter + join(getQoreVscPkgPath(extensionPath), 'bin'),
         QORE_MODULE_DIR: getQoreVscPkgModuleDirVar(extensionPath),
         LD_LIBRARY_PATH: getQoreVscPkgLdLibPathVar(extensionPath)
     };
