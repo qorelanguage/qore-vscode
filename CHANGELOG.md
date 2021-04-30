@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.4
+
+* Bump y18n from 4.0.0 to 4.0.3 (dependabot)
+
 ## 0.7.3
 
 * Fixed automatic installation of Qore language on Windows
