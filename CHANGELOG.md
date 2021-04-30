@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.3
+
+* Fixed automatic installation of Qore language on Windows
+
 ## 0.7.1
 
 * Added isLangClientAvailable() to the API.
