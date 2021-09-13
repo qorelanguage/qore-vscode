@@ -80,8 +80,7 @@ function setLocale() {
             use_default_locale = true;
             setPoFile();
         }
-    }
-    else {
+    } else {
         use_default_locale = true;
         setPoFile();
     }
@@ -97,8 +96,7 @@ function setLocale() {
 
     if (use_default_locale) {
         msg.log(t`UsingDefaultLocale ${locale}`);
-    }
-    else {
+    } else {
         msg.log(t`UsingLocaleSettings ${locale}`);
     }
 }
@@ -151,8 +149,7 @@ function qoreVscPkgInstallation(extensionPath: string) {
                 installThen,
                 err => { msg.logPlusConsole(String(err)); }
             );
-        }
-        else {
+        } else {
             window.showWarningMessage(messageToShow, "Yes", "No").then(
                 installThen,
                 err => { msg.logPlusConsole(String(err)); }
@@ -182,12 +179,10 @@ function doQLSLaunch(extensionPath: string, useQLS, launchOnly: boolean) {
 
     if (qoreLaunchCfg !== undefined) {
         qlsManager.startWithLaunchConfig(extensionPath, qoreLaunchCfg);
-    }
-    else if (!launchOnly) {
+    } else if (!launchOnly) {
         if (plaformHasQoreVscPkg()) { // offer installing Qore VSCode package
             qoreVscPkgInstallation(extensionPath);
-        }
-        else {
+        } else {
             msg.warning(t`QoreAndModulesNotFound`);
             openInBrowser('https://github.com/qorelanguage/qore-vscode/wiki/Visual-Code-for-Qore-Language-Setup');
         }
@@ -238,8 +233,7 @@ function registerCommands(context: ExtensionContext) {
             await qlsManager.stop();
 
             installQoreVscPkg(context.extensionPath, () => {}, () => {});
-        }
-        else {
+        } else {
             msg.info(t`LatestQoreVscPkgInstalled`);
         }
     }));

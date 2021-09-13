@@ -83,6 +83,8 @@ export function getQoreVscPkgLdLibPathVar(extensionPath: string): string {
     } else {
         libPath += join(pkgPath, 'lib');
     }
+
+    //msg.logPlusConsole(`LD_LIBRARY_PATH: ${libPath}`);
     return libPath;
 }
 
