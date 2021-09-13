@@ -62,8 +62,13 @@ export function getQoreVscPkgModuleDirVar(extensionPath: string): string {
     const version = getLatestQoreVscPkgVersion();
     const pkgPath = getQoreVscPkgPath(extensionPath);
     let qoreModuleDir = '';
-    qoreModuleDir += join(pkgPath, 'lib', 'qore-modules') + delimiter;
-    qoreModuleDir += join(pkgPath, 'lib', 'qore-modules', version) + delimiter;
+    if (platform() == 'linux') {
+        qoreModuleDir += join(pkgPath, 'lib64', 'qore-modules') + delimiter;
+        qoreModuleDir += join(pkgPath, 'lib64', 'qore-modules', version) + delimiter;
+    } else {
+        qoreModuleDir += join(pkgPath, 'lib', 'qore-modules') + delimiter;
+        qoreModuleDir += join(pkgPath, 'lib', 'qore-modules', version) + delimiter;
+    }
     qoreModuleDir += join(pkgPath, 'share', 'qore-modules') + delimiter;
     qoreModuleDir += join(pkgPath, 'share', 'qore-modules', version);
     return qoreModuleDir;
@@ -73,7 +78,11 @@ export function getQoreVscPkgModuleDirVar(extensionPath: string): string {
 export function getQoreVscPkgLdLibPathVar(extensionPath: string): string {
     const pkgPath = getQoreVscPkgPath(extensionPath);
     let libPath = '';
-    libPath += join(pkgPath, 'lib');
+    if (platform() == 'linux') {
+        libPath += join(pkgPath, 'lib64');
+    } else {
+        libPath += join(pkgPath, 'lib');
+    }
     return libPath;
 }
 
@@ -192,6 +201,7 @@ async function _installQoreVscPkg(extensionPath: string, version: string, archiv
         onError(message);
         return;
     }
+    // msg.logPlusConsole(`archivePath: ${archivePath} extensionPath: ${extensionPath}`);
     msg.logPlusConsole(t`ExtractedQoreVscPkg`);
 
     // write version file

@@ -36,7 +36,7 @@ export function checkQoreOk(qoreExec: string, launchOptions?): boolean {
     msg.logPlusConsole("Checking Qore executable: " + qoreExec);
     const result = checkExecOkResult(
         qoreExec,
-        ["-l astparser -l json -ne \"int x = 1; x++;\""],
+        ["-l astparser -l json -nX 1"],
         launchOptions
     );
     if (result.status == 0) {
