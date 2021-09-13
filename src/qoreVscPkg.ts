@@ -17,11 +17,11 @@ let installInProgress: boolean = false;
 const VersionFile = 'pkg-ver.txt';
 
 export function plaformHasQoreVscPkg(): boolean {
-    return (platform() == 'win32') || (platform() == 'darwin');
+    return (platform() == 'win32') || (platform() == 'darwin') || (platform() == 'linux');
 }
 
 export function getLatestQoreVscPkgVersion(): string {
-    return '0.9.14';
+    return '1.0.4';
 }
 
 //! get path to Qore VSCode package dir
@@ -29,6 +29,7 @@ export function getQoreVscPkgPath(extensionPath: string): string {
     if (platform() == 'darwin') {
         return '/opt/qore';
     }
+    // windows and linux install to the extension directory
     return join(extensionPath, 'qore');
 }
 
@@ -97,8 +98,7 @@ export function getInstalledQoreVscPkgVersion(extensionPath: string): string | u
             getQoreVscPkgVersionPath(extensionPath),
             { encoding: 'utf8' }
         );
-    }
-    catch (err) {
+    } catch (err) {
         return undefined;
     }
     return verString;
@@ -109,7 +109,7 @@ async function _removeMacQoreVscPkg(extensionPath: string): Promise<boolean> {
     const optPkgPath = getQoreVscPkgPath(extensionPath);
     if (existsSync(optPkgPath)) {
         return new Promise<boolean>((resolve, _reject) => {
-            sudo.exec('rm -rf /opt/qore', { name: 'Qore VS Code' }, 
+            sudo.exec('rm -rf /opt/qore', { name: 'Qore VS Code' },
                 function(error, _stdout, stderr) {
                     if (error) {
                         const message = t`FailedRemoveOldQoreVscPkg`;
@@ -132,8 +132,7 @@ function _removeExtDirQoreVscPkg(extensionPath: string): boolean {
     if (existsSync(oldPkgPath)) {
         try {
             removeSync(oldPkgPath);
-        }
-        catch (err) {
+        } catch (err) {
             msg.logPlusConsole('Failed removing previously installed package' + String(err));
             return false;
         }
@@ -219,10 +218,15 @@ export async function installQoreVscPkg(extensionPath: string, onSuccess, onErro
         archive = 'qore-' + version + '-windows.zip';
         uri = 'https://github.com/qorelanguage/qore/releases/download/release-' + version + '/' + archive;
     } else if (platform() == 'darwin') {
-        // https://qoretechnologies.com/download/qore-0.9.4.1-macos-10.15.3-Catalina-opt-qore.zip
-        archive = 'qore-0.9.4.1-macos-10.15.3-Catalina-opt-qore.zip';
+        // https://qoretechnologies.com/download/qore-1.0.4-macos-11.5.2-BigSur-opt-qore.zip
+        archive = 'qore-1.0.4-macos-11.5.2-BigSur-opt-qore.zip';
+        uri = 'https://qoretechnologies.com/download/' + archive;
+    } else if (platform() == 'linux') {
+        // https://qoretechnologies.com/download/qore-1.0.4-linux-x86_64.zip
+        archive = 'qore-1.0.4-linux-x86_64.zip';
         uri = 'https://qoretechnologies.com/download/' + archive;
     }
+
     const filePath = join(extensionPath, archive);
 
     const onInstallSuccess = function() {

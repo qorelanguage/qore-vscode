@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.5
+
+* Updated Qore to 1.0.4, added support for installing Linux packages for Qore
+
 ## 0.7.4
 
 * Bump y18n from 4.0.0 to 4.0.3 (dependabot)
