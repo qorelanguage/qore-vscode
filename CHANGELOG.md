@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.7.5
+## 0.7.6
 
 - Added Qore language icon to all associated Qore files
 
