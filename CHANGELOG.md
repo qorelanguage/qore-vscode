@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.7
+
+- Updated qls to avoid warnings with newer versions of Qore
+
 ## 0.7.6
 
 - Added Qore language icon to all associated Qore files
