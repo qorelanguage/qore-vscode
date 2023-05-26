@@ -21,7 +21,7 @@ export function plaformHasQoreVscPkg(): boolean {
 }
 
 export function getLatestQoreVscPkgVersion(): string {
-    return '0.9.14';
+    return '1.16.0';
 }
 
 //! get path to Qore VSCode package dir
@@ -109,7 +109,7 @@ async function _removeMacQoreVscPkg(extensionPath: string): Promise<boolean> {
     const optPkgPath = getQoreVscPkgPath(extensionPath);
     if (existsSync(optPkgPath)) {
         return new Promise<boolean>((resolve, _reject) => {
-            sudo.exec('rm -rf /opt/qore', { name: 'Qore VS Code' }, 
+            sudo.exec('rm -rf /opt/qore', { name: 'Qore VS Code' },
                 function(error, _stdout, stderr) {
                     if (error) {
                         const message = t`FailedRemoveOldQoreVscPkg`;
@@ -212,15 +212,20 @@ export async function installQoreVscPkg(extensionPath: string, onSuccess, onErro
     }
     installInProgress = true;
 
-    const version = getLatestQoreVscPkgVersion();
     let archive: string = '';
     let uri: string = '';
     if (platform() == 'win32') {
+        const version = getLatestQoreVscPkgVersion();
         archive = 'qore-' + version + '-windows.zip';
         uri = 'https://github.com/qorelanguage/qore/releases/download/release-' + version + '/' + archive;
     } else if (platform() == 'darwin') {
-        // https://qoretechnologies.com/download/qore-0.9.4.1-macos-10.15.3-Catalina-opt-qore.zip
-        archive = 'qore-0.9.4.1-macos-10.15.3-Catalina-opt-qore.zip';
+        let parch: string = '';
+        if (process.arch == 'arm64') {
+            parch = 'aarch64';
+        } else {
+            parch = 'x86_64';
+        }
+        archive = 'qore-1.16.0-macos-13.3.1-Ventura-' + parch + '-opt-qore.zip'
         uri = 'https://qoretechnologies.com/download/' + archive;
     }
     const filePath = join(extensionPath, archive);

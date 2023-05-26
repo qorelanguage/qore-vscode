@@ -3,6 +3,11 @@
 **qore-vscode** is an extension for Visual Studio Code adding
 [Qore](http://qore.org/) language support.
 
+## Version 0.8.0 (25.5.2023)
+
+- Fixed a bug where the extension reported that Qore was not available when installed manually
+- Updated Qore packages to use v1.16.0
+
 ## Version 0.7.7 (10.5.2022)
 
 - Updated qls to avoid warnings with newer versions of Qore

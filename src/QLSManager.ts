@@ -49,6 +49,7 @@ export class QLSManager {
             // language server command-line arguments
             const serverArgs = getServerArgs(extensionPath);
             const debugServerArgs = serverArgs;
+            console.log(t`serverArgs: ${JSON.stringify(serverArgs)}`);
 
             // language server options
             serverOptions = getServerOptions(
@@ -56,7 +57,10 @@ export class QLSManager {
                 serverArgs,
                 debugServerArgs
             );
+        } else {
+            console.log(t`serverOptions: ${JSON.stringify(serverOptions)}`);
         }
+
         msg.logPlusConsole(t`StartingQLSWithExe ${qoreExec}`);
 
         // options to control the language client

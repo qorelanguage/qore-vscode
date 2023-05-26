@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.0
+
+- Fixed a bug where the extension reported that Qore was not available when installed manually
+- Updated Qore packages to use v1.16.0
+
 ## 0.7.7
 
 - Updated qls to avoid warnings with newer versions of Qore

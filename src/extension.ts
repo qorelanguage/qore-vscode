@@ -432,6 +432,8 @@ export async function activate(context: ExtensionContext) {
     // find out if QLS should run
     let useQLS = workspace.getConfiguration("qore").get("useQLS");
 
+    //console.log(t`useQLS: ${useQLS}`);
+
     // launch QLS
     doQLSLaunch(context.extensionPath, useQLS, false);
 
