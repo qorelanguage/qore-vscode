@@ -214,18 +214,16 @@ export async function installQoreVscPkg(extensionPath: string, onSuccess, onErro
 
     let archive: string = '';
     let uri: string = '';
+    const version = getLatestQoreVscPkgVersion();
     if (platform() == 'win32') {
-        const version = getLatestQoreVscPkgVersion();
         archive = 'qore-' + version + '-windows.zip';
         uri = 'https://github.com/qorelanguage/qore/releases/download/release-' + version + '/' + archive;
     } else if (platform() == 'darwin') {
-        let parch: string = '';
         if (process.arch == 'arm64') {
-            parch = 'aarch64';
+            archive = 'qore-1.16.0-macos-13.3.1-Ventura-aarch64-opt-qore.zip'
         } else {
-            parch = 'x86_64';
+            archive = 'qore-1.16.0-macos-12.5-Monterey-x86_64-opt-qore.zip'
         }
-        archive = 'qore-1.16.0-macos-13.3.1-Ventura-' + parch + '-opt-qore.zip'
         uri = 'https://qoretechnologies.com/download/' + archive;
     }
     const filePath = join(extensionPath, archive);
