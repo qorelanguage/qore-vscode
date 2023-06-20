@@ -3,16 +3,20 @@
 **qore-vscode** is an extension for Visual Studio Code adding
 [Qore](http://qore.org/) language support.
 
-## Version 0.8.0 (25.5.2023)
+## Version 0.8.1 (2023-06-06)
+
+- Updated the module to use a Qore package build for macOS Catalina for x86_64 for maximum backwards compatibility
+
+## Version 0.8.0 (2023-05-25)
 
 - Fixed a bug where the extension reported that Qore was not available when installed manually
 - Updated Qore packages to use v1.16.0
 
-## Version 0.7.7 (10.5.2022)
+## Version 0.7.7 (2022-05-10)
 
 - Updated qls to avoid warnings with newer versions of Qore
 
-## Version 0.7.6 (10.5.2022)
+## Version 0.7.6 (2022-05-10)
 
 - Added Qore language icon to all associated Qore files
 
@@ -22,7 +26,7 @@
 
 **Qore 0.8.13+ has to be installed, including the `astparser` and `json` modules, for all the functionality to work except the debugging.**
 
-On Windows, if you don't have Qore installed, a warning message will be shown
+On Windows and macOS, if you don't have Qore installed, a warning message will be shown
 when the extension is activated asking you if you want to download the
 Qore VSCode package. If you select "Yes", a Qore package will be downloaded
 and installed into the extension directory. This will provide Qore

@@ -222,7 +222,7 @@ export async function installQoreVscPkg(extensionPath: string, onSuccess, onErro
         if (process.arch == 'arm64') {
             archive = 'qore-1.16.0-macos-13.3.1-Ventura-aarch64-opt-qore.zip'
         } else {
-            archive = 'qore-1.16.0-macos-12.5-Monterey-x86_64-opt-qore.zip'
+            archive = 'qore-1.16.0-macos-10.15-Catalina-x86_64-opt-qore.zip'
         }
         uri = 'https://qoretechnologies.com/download/' + archive;
     }
