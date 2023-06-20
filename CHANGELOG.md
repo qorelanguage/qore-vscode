@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.1
+
+- Updated the module to use a Qore package build for macOS Catalina for x86_64 for maximum backwards compatibility
+
 ## 0.8.0
 
 - Fixed a bug where the extension reported that Qore was not available when installed manually

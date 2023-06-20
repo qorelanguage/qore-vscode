@@ -2,7 +2,7 @@
     "name": "qore-vscode",
     "displayName": "Qore",
     "description": "Qore language support for VS Code",
-    "version": "0.8.0",
+    "version": "0.8.1",
     "publisher": "qoretechnologies",
     "author": {
         "name": "Qore Technologies",
@@ -56,8 +56,8 @@
                     "qore"
                 ],
                 "icon": {
-                  "light": "assets/img/qore_icon.png",
-                  "dark": "assets/img/qore_icon.png"
+                    "light": "assets/img/qore_icon.png",
+                    "dark": "assets/img/qore_icon.png"
                 },
                 "extensions": [
                     ".q",
@@ -383,7 +383,6 @@
         "source-map-support": "^0.5.12",
         "tslint": "^5.16.0",
         "typescript": "^3.5.2",
-        "vsce": "^1.65.0",
         "vscode-debugadapter-testsupport": "^1.24.0",
         "vscode-test": "^1.0.0"
     },
