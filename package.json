@@ -2,14 +2,14 @@
     "name": "qore-vscode",
     "displayName": "Qore",
     "description": "Qore language support for VS Code",
-    "version": "0.8.1",
+    "version": "0.8.2",
     "publisher": "qoretechnologies",
     "author": {
         "name": "Qore Technologies",
         "email": "vscode@qoretechnologies.com"
     },
     "engines": {
-        "vscode": "^1.35.0"
+        "vscode": "^1.75.0"
     },
     "license": "SEE LICENSE IN LICENSE.txt",
     "homepage": "https://github.com/qorelanguage/qore-vscode",
@@ -376,15 +376,15 @@
     "devDependencies": {
         "@types/glob": "^7.1.1",
         "@types/mocha": "^7.0.2",
-        "@types/node": "^8.10.25",
-        "@types/vscode": "^1.35.0",
+        "@types/node": "^18.7.14",
+        "@types/vscode": "^1.75.1",
         "glob": "^7.1.4",
         "mocha": "^7.1.1",
         "source-map-support": "^0.5.12",
         "tslint": "^5.16.0",
-        "typescript": "^3.5.2",
-        "vscode-debugadapter-testsupport": "^1.24.0",
-        "vscode-test": "^1.0.0"
+        "typescript": "^4.9",
+        "@vscode/debugadapter-testsupport": "^1.24.0",
+        "@vscode/test-electron": "^2.2.3"
     },
     "dependencies": {
         "extract-zip": "^2.0.0",
@@ -392,8 +392,8 @@
         "gettext-parser": "^4.0.3",
         "sudo-prompt": "^9.1.1",
         "ttag": "^1.7.0",
-        "vscode-debugadapter": "^1.24.0",
-        "vscode-debugprotocol": "^1.24.0",
-        "vscode-languageclient": "^5.1.1"
+        "@vscode/debugadapter": "^1.24.0",
+        "@vscode/debugprotocol": "^1.24.0",
+        "vscode-languageclient": "^8.1.0"
     }
 }

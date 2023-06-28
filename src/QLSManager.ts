@@ -1,6 +1,6 @@
 import { t } from 'ttag';
 import { CancellationToken } from 'vscode';
-import { LanguageClient, ServerOptions } from 'vscode-languageclient';
+import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
 
 import { getClientOptions } from './clientOptions';
 import * as msg from './qore_message';
@@ -26,6 +26,7 @@ export class QLSManager {
     }
 
     languageClientReady() {
+        console.log(`languageClientReady(): ${this._languageClientReady}`)
         return this._languageClientReady;
     }
 
@@ -36,10 +37,8 @@ export class QLSManager {
             serverOptions,
             clientOptions
         );
-        this._languageClient.onReady().then(
-            () => { this._languageClientReady = true; }
-        );
         this._languageClient.start();
+        this._languageClientReady = true;
         this._startedQLS = true;
         msg.log(t`StartedLanguageClient`);
     }

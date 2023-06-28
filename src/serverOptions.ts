@@ -1,4 +1,4 @@
-import { ServerOptions } from 'vscode-languageclient';
+import { ServerOptions } from 'vscode-languageclient/node';
 import { spawn, ChildProcess } from 'child_process';
 import * as msg from './qore_message';
 

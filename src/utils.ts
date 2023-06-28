@@ -68,9 +68,8 @@ export function openInBrowser(url: string) {
     const command: string = executable + ' ' + url;
     try {
         execSync(command);
-    }
-    catch (e) {
-        msg.logPlusConsole(e);
+    } catch (e) {
+        msg.logPlusConsole('Error: ' + e);
     }
 }
 

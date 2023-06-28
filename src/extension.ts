@@ -371,11 +371,13 @@ function getNoDebugExportApi() {
         },
 
         async isLangClientAvailable(timeout: number = 8000): Promise<boolean> {
+            console.log(`isLangClientAvailable timeout: ${timeout}`);
             const interval = 200;
             let n = Math.ceil(Math.max(timeout, 0) / interval);
             while (!qlsManager.languageClientReady() && --n) {
                 await new Promise(resolve => setTimeout(resolve, interval));
             }
+            console.log(`languageClientReady n: ${n}`);
             return Promise.resolve(!!n);
         }
     };

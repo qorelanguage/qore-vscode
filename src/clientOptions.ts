@@ -1,4 +1,4 @@
-import { LanguageClientOptions } from 'vscode-languageclient';
+import { LanguageClientOptions } from 'vscode-languageclient/node';
 import { workspace } from 'vscode';
 
 //! options to control the language client
