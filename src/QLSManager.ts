@@ -85,6 +85,7 @@ export class QLSManager {
     }
 
     startWithLaunchConfig(extensionPath: string, config: QoreLaunchConfig) {
+        console.log(t`QLSManager.startWithLaunchConfig() extensionPath: ${extensionPath}`);
         const qoreExec = config.getQoreExec();
         const env = config.getLaunchEnv();
         const serverArgs = getServerArgs(extensionPath);

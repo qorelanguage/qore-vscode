@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.3
+
+- fixed bugs in the Qore Language Server when there are unreadable files in the directory to be scanned
+
 ## 0.8.2
 
 - (Really) fixed the bug where the extension reported that Qore was not available when installed manually by updating to use the latest internal VSCode APIs
