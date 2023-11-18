@@ -2,7 +2,7 @@
     "name": "qore-vscode",
     "displayName": "Qore",
     "description": "Qore language support for VS Code",
-    "version": "0.8.3",
+    "version": "0.8.4",
     "publisher": "qoretechnologies",
     "author": {
         "name": "Qore Technologies",
@@ -40,7 +40,6 @@
         "languageserver"
     ],
     "activationEvents": [
-        "onLanguage:qore",
         "onDebug",
         "onCommand:extension.qore-vscode.getFilename",
         "onCommand:extension.qore-vscode.getConnection",

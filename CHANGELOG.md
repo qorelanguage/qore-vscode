@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.4
+
+- fixed bugs when there were UNIX socket files in directories to be scanned
+
 ## 0.8.3
 
 - fixed bugs in the Qore Language Server when there are unreadable files in the directory to be scanned
